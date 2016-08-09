@@ -1,4 +1,4 @@
-package org.nearbyshops.communitylibrary.ContractClasses;
+package org.nearbyshops.communitylibrary.Model;
 
 /**
  * Created by sumeet on 6/8/16.
