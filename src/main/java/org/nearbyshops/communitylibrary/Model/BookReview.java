@@ -30,18 +30,18 @@ public class BookReview {
 
             + " FOREIGN KEY(" + BookReview.BOOK_ID +") REFERENCES " + Book.TABLE_NAME + "(" + Book.BOOK_ID + "),"
             + " FOREIGN KEY(" + BookReview.MEMBER_ID +") REFERENCES " + Member.TABLE_NAME + "(" + Member.MEMBER_ID + "),"
-            + " UNIQUE (" + BookReview.BOOK_REVIEW_ID + "," + BookReview.MEMBER_ID + ")"
+            + " UNIQUE (" + BookReview.BOOK_ID + "," + BookReview.MEMBER_ID + ")"
             + ")";
 
 
 
     // Instance Variables
 
-    Integer bookReviewID;
-    Integer bookID;
-    Integer memberID;
-    Integer rating;
-    String reviewText;
+    private Integer bookReviewID;
+    private Integer bookID;
+    private Integer memberID;
+    private Integer rating;
+    private String reviewText;
 
 
     // getter and Setter Methods

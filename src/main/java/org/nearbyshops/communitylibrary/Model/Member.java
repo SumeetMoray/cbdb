@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.Model;
 
+import java.sql.Timestamp;
+
 /**
  * Created by sumeet on 8/8/16.
  */
@@ -31,7 +33,9 @@ public class Member {
                     + " " + Member.PROFILE_IMAGE_URL + " VARCHAR(300),"
                     + " " + Member.CITY + " VARCHAR(100),"
                     + " " + Member.ABOUT + " VARCHAR(1000),"
-                    + " " + Member.DATE_OF_BIRTH + " timestamp with time zone"
+                    + " " + Member.DATE_OF_BIRTH + " timestamp with time zone,"
+                    + " UNIQUE (" + Member.USER_NAME + ")"
+
                     + ")";
 
 
@@ -44,7 +48,7 @@ public class Member {
     private String profileImageURL;
     private String city;
     private String about;
-    private String dateOfBirth;
+    private Timestamp dateOfBirth;
 
 
     // Getter and Setter Methods
@@ -106,11 +110,12 @@ public class Member {
         this.about = about;
     }
 
-    public String getDateOfBirth() {
+
+    public Timestamp getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(Timestamp dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }

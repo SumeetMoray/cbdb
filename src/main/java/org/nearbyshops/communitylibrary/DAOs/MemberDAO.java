@@ -1,16 +1,10 @@
 package org.nearbyshops.communitylibrary.DAOs;
 
-import org.nearbyshops.communitylibrary.Model.Book;
-import org.nearbyshops.communitylibrary.Model.BookCategory;
 import org.nearbyshops.communitylibrary.JDBCContract;
-import org.nearbyshops.communitylibrary.Model.BookReview;
-import org.nearbyshops.communitylibrary.ModelEndpoint.BookEndpoint;
+import org.nearbyshops.communitylibrary.Model.Member;
+import org.nearbyshops.communitylibrary.ModelEndpoint.MemberEndpoint;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +12,7 @@ import java.util.List;
 /**
  * Created by sumeet on 8/8/16.
  */
-public class BookDAO {
+public class MemberDAO {
 
 
         @Override
@@ -28,7 +22,7 @@ public class BookDAO {
         }
 
 
-        public int saveBook(Book book)
+        public int saveMember(Member member)
         {
 
 
@@ -36,27 +30,55 @@ public class BookDAO {
             Statement stmt = null;
             int idOfInsertedRow = 0;
 
-            String insertStatement = "INSERT INTO "
-                    + Book.TABLE_NAME
-                    + "("
-                    + Book.AUTHOR_NAME + ","
-                    + Book.BACKDROP_IMAGE_URL + ","
-                    + Book.BOOK_CATEGORY_ID + ","
-                    + Book.BOOK_COVER_IMAGE_URL + ","
+            String insertStatement = "";
 
-                    + Book.BOOK_DESCRIPTION + ","
-                    + Book.TIMESTAMP_UPDATED + ","
-                    + Book.BOOK_NAME
+            if(member.getDateOfBirth()!=null)
+            {
+                insertStatement = "INSERT INTO "
+                        + Member.TABLE_NAME
+                        + "("
+                        + Member.USER_NAME + ","
+                        + Member.PASSWORD + ","
+                        + Member.MEMBER_NAME + ","
+                        + Member.PROFILE_IMAGE_URL + ","
+                        + Member.CITY + ","
+                        + Member.ABOUT + ","
+                        + Member.DATE_OF_BIRTH + ""
+                        + ") VALUES("
+                        + "'" + member.getUserName() + "',"
+                        + "'" + member.getPassword() + "',"
+                        + "'" + member.getMemberName() + "',"
+                        + "'" + member.getProfileImageURL() + "',"
+                        + "'" + member.getCity() + "',"
+                        + "'" + member.getAbout() + "',"
+                        + "'" + member.getDateOfBirth() + "'"
+                        + ")";
+            }
+            else
+            {
 
-                    + ") VALUES("
-                    + "'" + book.getAuthorName() + "',"
-                    + "'" + book.getBackdropImageURL() + "',"
-                    + book.getBookCategoryID() + ","
-                    + "'" + book.getBookCoverImageURL() + "',"
-                    + "'" + book.getBookDescription() + "',"
-                    + "'" + "now()" + "',"
-                    + "'" + book.getBookName() + "'"
-                    + ")";
+                insertStatement = "INSERT INTO "
+                        + Member.TABLE_NAME
+                        + "("
+                        + Member.USER_NAME + ","
+                        + Member.PASSWORD + ","
+                        + Member.MEMBER_NAME + ","
+                        + Member.PROFILE_IMAGE_URL + ","
+                        + Member.CITY + ","
+                        + Member.ABOUT + ""
+                        + ") VALUES("
+                        + "'" + member.getUserName() + "',"
+                        + "'" + member.getPassword() + "',"
+                        + "'" + member.getMemberName() + "',"
+                        + "'" + member.getProfileImageURL() + "',"
+                        + "'" + member.getCity() + "',"
+                        + "'" + member.getAbout() + "'"
+                        + ")";
+            }
+
+
+
+
 
             try {
 
@@ -111,27 +133,36 @@ public class BookDAO {
         }
 
 
-        public int updateBook(Book book)
+        public int updateMember(Member member)
         {
 
             //,int itemCategoryID
 
             //item.setItemCategoryID(itemCategoryID);
 
-            String updateStatement = "UPDATE " + Book.TABLE_NAME
+            String updateStatement = "UPDATE "
+
+                    + Member.TABLE_NAME
 
                     + " SET "
+                    + Member.USER_NAME + " = " + "'" + member.getUserName() + "'" + ","
+                    + Member.PASSWORD + " = " + "'" + member.getPassword() + "'" + ","
+                    + Member.MEMBER_NAME + " = " + "'" + member.getMemberName() + "'" + ","
+                    + Member.PROFILE_IMAGE_URL + " = " + "'" + member.getProfileImageURL() + "'" + ","
+                    + Member.CITY + " = " + "'" + member.getCity() + "'" + ","
+                    + Member.ABOUT + " = " + "'" + member.getAbout() + "'" ;
 
-                    + Book.BOOK_CATEGORY_ID + " = " + "" + book.getBookCategoryID() + "" + ","
-                    + Book.BOOK_NAME + " = " + "'" + book.getBookName() + "'" + ","
-                    + Book.BOOK_COVER_IMAGE_URL + " = " + "'" + book.getBookCoverImageURL() + "'" + ","
-                    + Book.BACKDROP_IMAGE_URL + " = " + "'" + book.getBackdropImageURL() + "'" + ","
-                    + Book.AUTHOR_NAME + " = " + "'" + book.getAuthorName() + "'" + ","
-                    + Book.BOOK_DESCRIPTION + " = " + "'" + book.getBookDescription() + "'" + ","
-                    + Book.TIMESTAMP_UPDATED + " = " + "'" + "now()" + "'" + ""
 
-                    + " WHERE "
-                    + Book.BOOK_ID + " = " + book.getBookID();
+            if(member.getDateOfBirth()!=null)
+            {
+                updateStatement = updateStatement + ","
+                        + Member.DATE_OF_BIRTH + " = " + "'" + member.getDateOfBirth() + "'" + "";
+            }
+
+
+            updateStatement = updateStatement + " WHERE "
+                    + Member.MEMBER_ID + " = " + member.getMemberID();
+
 
             Connection conn = null;
             Statement stmt = null;
@@ -184,11 +215,11 @@ public class BookDAO {
 
 
 
-        public int deleteBook(int bookID)
+        public int deleteMember(int memberID)
         {
 
-            String deleteStatement = "DELETE FROM " + Book.TABLE_NAME
-                    + " WHERE " + Book.BOOK_ID + " = " + bookID;
+            String deleteStatement = "DELETE FROM " + Member.TABLE_NAME
+                    + " WHERE " + Member.MEMBER_ID + " = " + memberID;
 
             Connection conn= null;
             Statement stmt = null;
@@ -241,75 +272,37 @@ public class BookDAO {
 
 
 
-        public List<Book> getBooks(
-                Integer bookCategoryID,
+        public List<Member> getMembers(
                 String sortBy,
                 Integer limit, Integer offset
         ) {
             String query = "";
 
-            String queryNormal = "SELECT * FROM " + Book.TABLE_NAME;
+            String queryNormal = "SELECT * FROM " + Member.TABLE_NAME;
 
 
-            String queryJoin = "SELECT "
-
-                    + Book.TABLE_NAME + "." + Book.BOOK_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_COVER_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.BACKDROP_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.AUTHOR_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_DESCRIPTION + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_CREATED + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + ","
-
-                    +  "avg(" + BookReview.TABLE_NAME + "." + BookReview.RATING + ") as avg_rating" + ","
-                    +  "count(" + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + ") as rating_count" + ""
-
-                    + " FROM "
-                    + Book.TABLE_NAME  + " LEFT OUTER JOIN " + BookReview.TABLE_NAME
-
-                    + " ON ("
-//                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + "=" + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_ID
-//                    + " AND "
-                    + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + " = " + Book.TABLE_NAME + "." + Book.BOOK_ID + ")";
-
-
-            if(bookCategoryID != null)
+/*
+            if(parentCategoryID != null)
             {
-                queryJoin = queryJoin + " WHERE "
-                        + Book.TABLE_NAME
+
+                */
+/*queryJoin = queryJoin + " AND "
+                        + BookCategory.TABLE_NAME
                         + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+                        + BookCategory.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+*//*
 
 
 
                 //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
 
                 queryNormal = queryNormal + " WHERE "
-                        + Book.TABLE_NAME
+                        + BookCategory.TABLE_NAME
                         + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+                        + BookCategory.PARENT_CATEGORY_ID + " = " + parentCategoryID;
 
             }
-
-
-
-
-            // all the non-aggregate columns which are present in select must be present in group by also.
-
-            queryJoin = queryJoin
-
-                    + " group by "
-                    + Book.TABLE_NAME + "." + Book.BOOK_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_COVER_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.BACKDROP_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.AUTHOR_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_DESCRIPTION + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_CREATED + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + "";
+*/
 
 
 
@@ -324,7 +317,7 @@ public class BookDAO {
                     String queryPartSortBy = " ORDER BY " + sortBy;
 
                     queryNormal = queryNormal + queryPartSortBy;
-                    queryJoin = queryJoin + queryPartSortBy;
+//                    queryJoin = queryJoin + queryPartSortBy;
                 }
             }
 
@@ -346,7 +339,7 @@ public class BookDAO {
 
 
                 queryNormal = queryNormal + queryPartLimitOffset;
-                queryJoin = queryJoin + queryPartLimitOffset;
+//                queryJoin = queryJoin + queryPartLimitOffset;
             }
 
 
@@ -360,7 +353,7 @@ public class BookDAO {
 
 
 
-            query = queryJoin;
+            query = queryNormal;
 
             /*
 
@@ -377,8 +370,7 @@ public class BookDAO {
             */
 
 
-
-            ArrayList<Book> bookList = new ArrayList<Book>();
+            ArrayList<Member> membersList = new ArrayList<>();
 
 
             Connection conn = null;
@@ -397,28 +389,25 @@ public class BookDAO {
 
                 while(rs.next())
                 {
-                    Book book = new Book();
 
-                    book.setAuthorName(rs.getString(Book.AUTHOR_NAME));
-                    book.setBackdropImageURL(rs.getString(Book.BACKDROP_IMAGE_URL));
-                    book.setBookCategoryID(rs.getInt(Book.BOOK_CATEGORY_ID));
-                    book.setBookCoverImageURL(rs.getString(Book.BOOK_COVER_IMAGE_URL));
-                    book.setBookDescription(rs.getString(Book.BOOK_DESCRIPTION));
-                    book.setBookID(rs.getInt(Book.BOOK_ID));
-                    book.setBookName(rs.getString(Book.BOOK_NAME));
-                    book.setTimestampCreated(rs.getTimestamp(Book.TIMESTAMP_CREATED));
-                    book.setTimeStampUpdated(rs.getTimestamp(Book.TIMESTAMP_UPDATED));
+                    Member member = new Member();
 
-                    book.setRt_rating_avg(rs.getFloat("avg_rating"));
-                    book.setRt_rating_count(rs.getFloat("rating_count"));
+                    member.setMemberID(rs.getInt(Member.MEMBER_ID));
+                    member.setUserName(rs.getString(Member.USER_NAME));
+//                    member.setPassword(rs.getString(Member.PASSWORD));
+                    member.setMemberName(rs.getString(Member.MEMBER_NAME));
+                    member.setProfileImageURL(rs.getString(Member.PROFILE_IMAGE_URL));
+                    member.setCity(rs.getString(Member.CITY));
+                    member.setAbout(rs.getString(Member.ABOUT));
+//                    member.setDateOfBirth(rs.getTimestamp(Member.DATE_OF_BIRTH));
 
+                    membersList.add(member);
 
-                    bookList.add(book);
                 }
 
 
 
-                System.out.println("books By CategoryID " + bookList.size());
+                System.out.println("Members List :  " + membersList.size());
 
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -457,43 +446,42 @@ public class BookDAO {
                 }
             }
 
-            return bookList;
+            return membersList;
         }
 
 
 
-        public BookEndpoint getEndPointMetadata(
-                Integer bookCategoryID)
+        public MemberEndpoint getEndPointMetadata()
         {
 
 
             String query = "";
 
             String queryNormal = "SELECT "
-                    + "count( DISTINCT " + Book.BOOK_ID + ") as item_count" + ""
-                    + " FROM " + Book.TABLE_NAME;
+                    + "count( DISTINCT " + Member.MEMBER_ID + ") as item_count" + ""
+                    + " FROM " + Member.TABLE_NAME;
 
 
-            if(bookCategoryID != null)
+            /*if(parentCategoryID != null)
             {
-/*
+*//*
                 queryJoin = queryJoin + " AND "
                         + ItemContract.TABLE_NAME
                         + "."
                         + ItemContract.ITEM_CATEGORY_ID + " = " + itemCategoryID;
 
-*/
+*//*
 
 
                 //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
 
                 queryNormal = queryNormal + " WHERE "
-                        + Book.TABLE_NAME
+                        + BookCategory.TABLE_NAME
                         + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+                        + BookCategory.PARENT_CATEGORY_ID + " = " + parentCategoryID;
 
             }
-
+*/
 
 
             // Applying filters
@@ -511,7 +499,7 @@ public class BookDAO {
             query = queryNormal;
 
 
-            BookEndpoint endPoint = new BookEndpoint();
+            MemberEndpoint endPoint = new MemberEndpoint();
 
 
             Connection conn = null;
@@ -582,20 +570,18 @@ public class BookDAO {
 
 
 
-        public Book getBook(int bookID)
+        public Member getMember(int memberID)
         {
 
-            String query = "SELECT * FROM " +  Book.TABLE_NAME
-                    + " WHERE " + Book.BOOK_ID + " = " + bookID;
+            String query = "SELECT * FROM " +  Member.TABLE_NAME
+                    + " WHERE " + Member.MEMBER_ID + " = " + memberID;
 
 
             Connection conn = null;
             Statement stmt = null;
             ResultSet rs = null;
 
-
-            //ItemCategory itemCategory = new ItemCategory();
-            Book book = null;
+            Member member = null;
 
             try {
 
@@ -611,24 +597,22 @@ public class BookDAO {
 
                 while(rs.next())
                 {
-                    book = new Book();
+                    member = new Member();
 
-                    book.setAuthorName(rs.getString(Book.AUTHOR_NAME));
-                    book.setBackdropImageURL(rs.getString(Book.BACKDROP_IMAGE_URL));
-                    book.setBookCategoryID(rs.getInt(Book.BOOK_CATEGORY_ID));
-                    book.setBookCoverImageURL(rs.getString(Book.BOOK_COVER_IMAGE_URL));
-                    book.setBookDescription(rs.getString(Book.BOOK_DESCRIPTION));
-                    book.setBookID(rs.getInt(Book.BOOK_ID));
-                    book.setBookName(rs.getString(Book.BOOK_NAME));
-                    book.setTimestampCreated(rs.getTimestamp(Book.TIMESTAMP_CREATED));
-                    book.setTimeStampUpdated(rs.getTimestamp(Book.TIMESTAMP_UPDATED));
+                    member.setMemberID(rs.getInt(Member.MEMBER_ID));
+                    member.setUserName(rs.getString(Member.USER_NAME));
+//                    member.setPassword(rs.getString(Member.PASSWORD));
+                    member.setMemberName(rs.getString(Member.MEMBER_NAME));
+                    member.setProfileImageURL(rs.getString(Member.PROFILE_IMAGE_URL));
+                    member.setCity(rs.getString(Member.CITY));
+                    member.setAbout(rs.getString(Member.ABOUT));
+//                    member.setDateOfBirth(rs.getTimestamp(Member.DATE_OF_BIRTH));
 
-                    System.out.println("Get Book by ID : " + book.getBookID());
+                    System.out.println("Get Member by ID : " + member.getMemberID());
                 }
 
+
                 //System.out.println("Total itemCategories queried " + itemCategoryList.size());
-
-
 
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -664,8 +648,110 @@ public class BookDAO {
                 }
             }
 
-            return book;
+            return member;
         }
+
+
+
+
+
+    public Member getMemberPassword(Integer memberID, String username)
+    {
+
+
+        String query = "";
+
+
+        if(memberID!=null)
+        {
+            query = "SELECT * FROM " + Member.TABLE_NAME
+                    + " WHERE ID = " + memberID;
+
+        }
+
+        else if(username!=null)
+        {
+            query = "SELECT * FROM " + Member.TABLE_NAME
+                    + " WHERE " +  Member.USER_NAME + " = " + "'" + username + "'";
+
+        }
+
+
+
+        if(query.equals(""))
+        {
+            return null;
+        }
+
+
+
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+
+//		Distributor distributor = null;
+        Member endUser = null;
+
+        try {
+
+            conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
+                    JDBCContract.CURRENT_USERNAME,JDBCContract.CURRENT_PASSWORD);
+
+            stmt = conn.createStatement();
+
+            rs = stmt.executeQuery(query);
+
+            while(rs.next())
+            {
+                endUser = new Member();
+
+                endUser.setMemberID(rs.getInt(Member.MEMBER_ID));
+                endUser.setMemberName(rs.getString(Member.USER_NAME));
+                endUser.setPassword(rs.getString(Member.PASSWORD));
+            }
+
+
+            //System.out.println("Total itemCategories queried " + itemCategoryList.size());
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(stmt!=null)
+                {stmt.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(conn!=null)
+                {conn.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return endUser;
+    }
 
 
 }

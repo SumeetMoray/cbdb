@@ -1,8 +1,8 @@
-package org.nearbyshops.communitylibrary.RESTInterfaces;
+package org.nearbyshops.communitylibrary.RESTEndpoint;
 
 import org.nearbyshops.communitylibrary.Globals.Globals;
-import org.nearbyshops.communitylibrary.Model.Book;
-import org.nearbyshops.communitylibrary.ModelEndpoint.BookEndpoint;
+import org.nearbyshops.communitylibrary.Model.BookCategory;
+import org.nearbyshops.communitylibrary.ModelEndpoint.BookCategoryEndpoint;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -14,23 +14,23 @@ import java.util.List;
  * Created by sumeet on 9/8/16.
  */
 
-@Path("/v1/Book")
-public class BookResource {
+@Path("/v1/BookCategory")
+public class BookCategoryResource {
 
         @POST
         @Produces(MediaType.APPLICATION_JSON)
         @Consumes(MediaType.APPLICATION_JSON)
-        public Response saveBook(Book book)
+        public Response saveBookCategory(BookCategory bookCategory)
         {
-            int idOfInsertedRow = Globals.bookDAO.saveBook(book);
+            int idOfInsertedRow = Globals.bookCategoryDAO.saveBookCategory(bookCategory);
 
-            book.setBookID(idOfInsertedRow);
+            bookCategory.setBookCategoryID(idOfInsertedRow);
 
             if(idOfInsertedRow >=1)
             {
                 Response response = Response.status(Response.Status.CREATED)
-                        .location(URI.create("/api/Book/" + idOfInsertedRow))
-                        .entity(book)
+                        .location(URI.create("/api/v1/BookCategory/" + idOfInsertedRow))
+                        .entity(bookCategory)
                         .build();
 
                 return response;
@@ -50,15 +50,15 @@ public class BookResource {
 
 
         @PUT
-        @Path("/{BookID}")
+        @Path("/{BookCategoryID}")
         @Produces(MediaType.APPLICATION_JSON)
         @Consumes(MediaType.APPLICATION_JSON)
-        public Response updateItem(Book book, @PathParam("BookID")int bookID)
+        public Response updateBookCategory(BookCategory bookCategory, @PathParam("BookCategoryID")int bookCategoryID)
         {
 
-            book.setBookID(bookID);
+            bookCategory.setBookCategoryID(bookCategoryID);
 
-            int rowCount = Globals.bookDAO.updateBook(book);
+            int rowCount = Globals.bookCategoryDAO.updateBookCategory(bookCategory);
 
             if(rowCount >= 1)
             {
@@ -85,16 +85,16 @@ public class BookResource {
 
         @PUT
         @Consumes(MediaType.APPLICATION_JSON)
-        public Response updateItemBulk(List<Book> bookList)
+        public Response updateBookCategoryBulk(List<BookCategory> bookCategoryList)
         {
             int rowCountSum = 0;
 
-            for(Book item : bookList)
+            for(BookCategory item : bookCategoryList)
             {
-                rowCountSum = rowCountSum + Globals.bookDAO.updateBook(item);
+                rowCountSum = rowCountSum + Globals.bookCategoryDAO.updateBookCategory(item);
             }
 
-            if(rowCountSum ==  bookList.size())
+            if(rowCountSum ==  bookCategoryList.size())
             {
                 Response response = Response.status(Response.Status.OK)
                         .entity(null)
@@ -102,7 +102,7 @@ public class BookResource {
 
                 return response;
             }
-            else if( rowCountSum < bookList.size() && rowCountSum > 0)
+            else if( rowCountSum < bookCategoryList.size() && rowCountSum > 0)
             {
                 Response response = Response.status(Response.Status.PARTIAL_CONTENT)
                         .entity(null)
@@ -123,14 +123,14 @@ public class BookResource {
         }
 
 
+
         @DELETE
-        @Path("/{BookID}")
+        @Path("/{BookCategoryID}")
         @Produces(MediaType.APPLICATION_JSON)
-        public Response deleteItem(@PathParam("BookID")int bookID)
+        public Response deleteBookCategory(@PathParam("BookCategoryID")int bookCategoryID)
         {
 
-            int rowCount = Globals.bookDAO.deleteBook(bookID);
-
+            int rowCount = Globals.bookCategoryDAO.deleteBookCategory(bookCategoryID);
 
             if(rowCount>=1)
             {
@@ -157,8 +157,8 @@ public class BookResource {
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
-        public Response getBooks(
-                @QueryParam("BookCategoryID")Integer bookCategoryID,
+        public Response getBookCategories(
+                @QueryParam("ParentCategoryID")Integer parentCategoryID,
                 @QueryParam("SortBy") String sortBy,
                 @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
                 @QueryParam("metadata_only")Boolean metaonly)
@@ -188,20 +188,20 @@ public class BookResource {
                 set_offset = offset;
             }
 
-            BookEndpoint endPoint = Globals.bookDAO.getEndPointMetadata(bookCategoryID);
+            BookCategoryEndpoint endPoint = Globals.bookCategoryDAO.getEndPointMetadata(parentCategoryID);
 
             endPoint.setLimit(set_limit);
             endPoint.setMax_limit(max_limit);
             endPoint.setOffset(set_offset);
 
-            List<Book> list = null;
+            List<BookCategory> list = null;
 
 
             if(metaonly==null || (!metaonly)) {
 
                 list =
-                        Globals.bookDAO.getBooks(
-                                bookCategoryID,
+                        Globals.bookCategoryDAO.getBookCategories(
+                                parentCategoryID,
                                 sortBy,set_limit,set_offset
                         );
 
@@ -222,16 +222,16 @@ public class BookResource {
 
 
         @GET
-        @Path("/{BookID}")
+        @Path("/{BookCategoryID}")
         @Produces(MediaType.APPLICATION_JSON)
-        public Response getItem(@PathParam("BookID")int bookID)
+        public Response getItem(@PathParam("BookCategoryID")int bookCategoryID)
         {
-            System.out.println("BookID=" + bookID);
+            System.out.println("BookID=" + bookCategoryID);
 
 
             //marker
 
-            Book item = Globals.bookDAO.getBook(bookID);
+            BookCategory item = Globals.bookCategoryDAO.getBookCategory(bookCategoryID);
 
             if(item!= null)
             {

@@ -4,13 +4,9 @@ import org.nearbyshops.communitylibrary.Model.Book;
 import org.nearbyshops.communitylibrary.Model.BookCategory;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.BookReview;
-import org.nearbyshops.communitylibrary.ModelEndpoint.BookEndpoint;
+import org.nearbyshops.communitylibrary.ModelEndpoint.BookCategoryEndpoint;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +14,7 @@ import java.util.List;
 /**
  * Created by sumeet on 8/8/16.
  */
-public class BookDAO {
+public class BookCategoryDAO {
 
 
         @Override
@@ -28,7 +24,7 @@ public class BookDAO {
         }
 
 
-        public int saveBook(Book book)
+        public int saveBookCategory(BookCategory bookCategory)
         {
 
 
@@ -37,25 +33,17 @@ public class BookDAO {
             int idOfInsertedRow = 0;
 
             String insertStatement = "INSERT INTO "
-                    + Book.TABLE_NAME
+                    + BookCategory.TABLE_NAME
                     + "("
-                    + Book.AUTHOR_NAME + ","
-                    + Book.BACKDROP_IMAGE_URL + ","
-                    + Book.BOOK_CATEGORY_ID + ","
-                    + Book.BOOK_COVER_IMAGE_URL + ","
-
-                    + Book.BOOK_DESCRIPTION + ","
-                    + Book.TIMESTAMP_UPDATED + ","
-                    + Book.BOOK_NAME
-
+                    + BookCategory.BOOK_CATEGORY_NAME + ","
+                    + BookCategory.IMAGE_URL + ","
+                    + BookCategory.BACKDROP_IMAGE_URL + ","
+                    + BookCategory.PARENT_CATEGORY_ID + ""
                     + ") VALUES("
-                    + "'" + book.getAuthorName() + "',"
-                    + "'" + book.getBackdropImageURL() + "',"
-                    + book.getBookCategoryID() + ","
-                    + "'" + book.getBookCoverImageURL() + "',"
-                    + "'" + book.getBookDescription() + "',"
-                    + "'" + "now()" + "',"
-                    + "'" + book.getBookName() + "'"
+                    + "'" + bookCategory.getBookCategoryName() + "',"
+                    + "'" + bookCategory.getImageURL() + "',"
+                    + "'" + bookCategory.getBackdropImageURL() + "',"
+                    + bookCategory.getParentCategoryID() + ""
                     + ")";
 
             try {
@@ -111,27 +99,25 @@ public class BookDAO {
         }
 
 
-        public int updateBook(Book book)
+        public int updateBookCategory(BookCategory bookCategory)
         {
 
             //,int itemCategoryID
 
             //item.setItemCategoryID(itemCategoryID);
 
-            String updateStatement = "UPDATE " + Book.TABLE_NAME
+            String updateStatement = "UPDATE "
+
+                    + BookCategory.TABLE_NAME
 
                     + " SET "
-
-                    + Book.BOOK_CATEGORY_ID + " = " + "" + book.getBookCategoryID() + "" + ","
-                    + Book.BOOK_NAME + " = " + "'" + book.getBookName() + "'" + ","
-                    + Book.BOOK_COVER_IMAGE_URL + " = " + "'" + book.getBookCoverImageURL() + "'" + ","
-                    + Book.BACKDROP_IMAGE_URL + " = " + "'" + book.getBackdropImageURL() + "'" + ","
-                    + Book.AUTHOR_NAME + " = " + "'" + book.getAuthorName() + "'" + ","
-                    + Book.BOOK_DESCRIPTION + " = " + "'" + book.getBookDescription() + "'" + ","
-                    + Book.TIMESTAMP_UPDATED + " = " + "'" + "now()" + "'" + ""
+                    + BookCategory.BOOK_CATEGORY_NAME + " = " + "'" + bookCategory.getBookCategoryName() + "'" + ","
+                    + BookCategory.IMAGE_URL + " = " + "'" + bookCategory.getImageURL() + "'" + ","
+                    + BookCategory.BACKDROP_IMAGE_URL + " = " + "'" + bookCategory.getBackdropImageURL() + "'" + ","
+                    + BookCategory.PARENT_CATEGORY_ID + " = " + "" + bookCategory.getParentCategoryID() + "" + ""
 
                     + " WHERE "
-                    + Book.BOOK_ID + " = " + book.getBookID();
+                    + BookCategory.BOOK_CATEGORY_ID + " = " + bookCategory.getBookCategoryID();
 
             Connection conn = null;
             Statement stmt = null;
@@ -184,11 +170,11 @@ public class BookDAO {
 
 
 
-        public int deleteBook(int bookID)
+        public int deleteBookCategory(int bookCategoryID)
         {
 
-            String deleteStatement = "DELETE FROM " + Book.TABLE_NAME
-                    + " WHERE " + Book.BOOK_ID + " = " + bookID;
+            String deleteStatement = "DELETE FROM " + BookCategory.TABLE_NAME
+                    + " WHERE " + BookCategory.BOOK_CATEGORY_ID + " = " + bookCategoryID;
 
             Connection conn= null;
             Statement stmt = null;
@@ -241,75 +227,61 @@ public class BookDAO {
 
 
 
-        public List<Book> getBooks(
-                Integer bookCategoryID,
+        public List<BookCategory> getBookCategories(
+                Integer parentCategoryID,
                 String sortBy,
                 Integer limit, Integer offset
         ) {
             String query = "";
 
-            String queryNormal = "SELECT * FROM " + Book.TABLE_NAME;
+            String queryNormal = "SELECT * FROM " + BookCategory.TABLE_NAME;
 
 
             String queryJoin = "SELECT "
 
-                    + Book.TABLE_NAME + "." + Book.BOOK_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_COVER_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.BACKDROP_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.AUTHOR_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_DESCRIPTION + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_CREATED + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_ID + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_NAME + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.IMAGE_URL + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BACKDROP_IMAGE_URL + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.PARENT_CATEGORY_ID + ","
 
-                    +  "avg(" + BookReview.TABLE_NAME + "." + BookReview.RATING + ") as avg_rating" + ","
-                    +  "count(" + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + ") as rating_count" + ""
+                    +  "count(" + Book.TABLE_NAME + "." + Book.BOOK_ID + ") as book_count" + ""
 
                     + " FROM "
-                    + Book.TABLE_NAME  + " LEFT OUTER JOIN " + BookReview.TABLE_NAME
+                    + BookCategory.TABLE_NAME  + " LEFT OUTER JOIN " + Book.TABLE_NAME
 
                     + " ON ("
 //                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + "=" + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_ID
 //                    + " AND "
-                    + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + " = " + Book.TABLE_NAME + "." + Book.BOOK_ID + ")";
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_ID + " = " + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + ")";
 
 
-            if(bookCategoryID != null)
+
+            if(parentCategoryID != null)
             {
+
                 queryJoin = queryJoin + " WHERE "
-                        + Book.TABLE_NAME
+                        + BookCategory.TABLE_NAME
                         + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
-
-
-
-                //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
+                        + BookCategory.PARENT_CATEGORY_ID + " = " + parentCategoryID;
 
                 queryNormal = queryNormal + " WHERE "
-                        + Book.TABLE_NAME
+                        + BookCategory.TABLE_NAME
                         + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+                        + BookCategory.PARENT_CATEGORY_ID + " = " + parentCategoryID;
 
             }
 
 
 
-
             // all the non-aggregate columns which are present in select must be present in group by also.
 
-            queryJoin = queryJoin
-
-                    + " group by "
-                    + Book.TABLE_NAME + "." + Book.BOOK_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_COVER_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.BACKDROP_IMAGE_URL + ","
-                    + Book.TABLE_NAME + "." + Book.AUTHOR_NAME + ","
-                    + Book.TABLE_NAME + "." + Book.BOOK_DESCRIPTION + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_CREATED + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + "";
+            queryJoin = queryJoin + " group by "
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_ID + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_NAME + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.IMAGE_URL + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.BACKDROP_IMAGE_URL + ","
+                    + BookCategory.TABLE_NAME + "." + BookCategory.PARENT_CATEGORY_ID + "";
 
 
 
@@ -377,8 +349,7 @@ public class BookDAO {
             */
 
 
-
-            ArrayList<Book> bookList = new ArrayList<Book>();
+            ArrayList<BookCategory> bookCategoryList = new ArrayList<>();
 
 
             Connection conn = null;
@@ -397,28 +368,23 @@ public class BookDAO {
 
                 while(rs.next())
                 {
-                    Book book = new Book();
 
-                    book.setAuthorName(rs.getString(Book.AUTHOR_NAME));
-                    book.setBackdropImageURL(rs.getString(Book.BACKDROP_IMAGE_URL));
-                    book.setBookCategoryID(rs.getInt(Book.BOOK_CATEGORY_ID));
-                    book.setBookCoverImageURL(rs.getString(Book.BOOK_COVER_IMAGE_URL));
-                    book.setBookDescription(rs.getString(Book.BOOK_DESCRIPTION));
-                    book.setBookID(rs.getInt(Book.BOOK_ID));
-                    book.setBookName(rs.getString(Book.BOOK_NAME));
-                    book.setTimestampCreated(rs.getTimestamp(Book.TIMESTAMP_CREATED));
-                    book.setTimeStampUpdated(rs.getTimestamp(Book.TIMESTAMP_UPDATED));
+                    BookCategory bookCategory = new BookCategory();
 
-                    book.setRt_rating_avg(rs.getFloat("avg_rating"));
-                    book.setRt_rating_count(rs.getFloat("rating_count"));
+                    bookCategory.setBookCategoryID(rs.getInt(BookCategory.BOOK_CATEGORY_ID));
+                    bookCategory.setBackdropImageURL(rs.getString(BookCategory.BACKDROP_IMAGE_URL));
+                    bookCategory.setBookCategoryName(rs.getString(BookCategory.BOOK_CATEGORY_NAME));
+                    bookCategory.setImageURL(rs.getString(BookCategory.IMAGE_URL));
+                    bookCategory.setParentCategoryID(rs.getInt(BookCategory.PARENT_CATEGORY_ID));
 
+                    bookCategory.setRt_book_count(rs.getInt("book_count"));
 
-                    bookList.add(book);
+                    bookCategoryList.add(bookCategory);
                 }
 
 
 
-                System.out.println("books By CategoryID " + bookList.size());
+                System.out.println("bookCategories " + bookCategoryList.size());
 
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -457,24 +423,24 @@ public class BookDAO {
                 }
             }
 
-            return bookList;
+            return bookCategoryList;
         }
 
 
 
-        public BookEndpoint getEndPointMetadata(
-                Integer bookCategoryID)
+        public BookCategoryEndpoint getEndPointMetadata(
+                Integer parentCategoryID)
         {
 
 
             String query = "";
 
             String queryNormal = "SELECT "
-                    + "count( DISTINCT " + Book.BOOK_ID + ") as item_count" + ""
-                    + " FROM " + Book.TABLE_NAME;
+                    + "count( DISTINCT " + BookCategory.BOOK_CATEGORY_ID + ") as item_count" + ""
+                    + " FROM " + BookCategory.TABLE_NAME;
 
 
-            if(bookCategoryID != null)
+            if(parentCategoryID != null)
             {
 /*
                 queryJoin = queryJoin + " AND "
@@ -488,9 +454,9 @@ public class BookDAO {
                 //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
 
                 queryNormal = queryNormal + " WHERE "
-                        + Book.TABLE_NAME
+                        + BookCategory.TABLE_NAME
                         + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+                        + BookCategory.PARENT_CATEGORY_ID + " = " + parentCategoryID;
 
             }
 
@@ -511,7 +477,7 @@ public class BookDAO {
             query = queryNormal;
 
 
-            BookEndpoint endPoint = new BookEndpoint();
+            BookCategoryEndpoint endPoint = new BookCategoryEndpoint();
 
 
             Connection conn = null;
@@ -582,20 +548,18 @@ public class BookDAO {
 
 
 
-        public Book getBook(int bookID)
+        public BookCategory getBookCategory(int bookCategoryID)
         {
 
-            String query = "SELECT * FROM " +  Book.TABLE_NAME
-                    + " WHERE " + Book.BOOK_ID + " = " + bookID;
+            String query = "SELECT * FROM " +  BookCategory.TABLE_NAME
+                    + " WHERE " + BookCategory.BOOK_CATEGORY_ID + " = " + bookCategoryID;
 
 
             Connection conn = null;
             Statement stmt = null;
             ResultSet rs = null;
 
-
-            //ItemCategory itemCategory = new ItemCategory();
-            Book book = null;
+            BookCategory bookCategory = null;
 
             try {
 
@@ -611,19 +575,15 @@ public class BookDAO {
 
                 while(rs.next())
                 {
-                    book = new Book();
+                    bookCategory = new BookCategory();
 
-                    book.setAuthorName(rs.getString(Book.AUTHOR_NAME));
-                    book.setBackdropImageURL(rs.getString(Book.BACKDROP_IMAGE_URL));
-                    book.setBookCategoryID(rs.getInt(Book.BOOK_CATEGORY_ID));
-                    book.setBookCoverImageURL(rs.getString(Book.BOOK_COVER_IMAGE_URL));
-                    book.setBookDescription(rs.getString(Book.BOOK_DESCRIPTION));
-                    book.setBookID(rs.getInt(Book.BOOK_ID));
-                    book.setBookName(rs.getString(Book.BOOK_NAME));
-                    book.setTimestampCreated(rs.getTimestamp(Book.TIMESTAMP_CREATED));
-                    book.setTimeStampUpdated(rs.getTimestamp(Book.TIMESTAMP_UPDATED));
+                    bookCategory.setParentCategoryID(rs.getInt(BookCategory.PARENT_CATEGORY_ID));
+                    bookCategory.setImageURL(rs.getString(BookCategory.IMAGE_URL));
+                    bookCategory.setBookCategoryName(rs.getString(BookCategory.BOOK_CATEGORY_NAME));
+                    bookCategory.setBackdropImageURL(rs.getString(BookCategory.BACKDROP_IMAGE_URL));
+                    bookCategory.setBookCategoryID(rs.getInt(BookCategory.BOOK_CATEGORY_ID));
 
-                    System.out.println("Get Book by ID : " + book.getBookID());
+                    System.out.println("Get BookCategory by ID : " + bookCategory.getBookCategoryID());
                 }
 
                 //System.out.println("Total itemCategories queried " + itemCategoryList.size());
@@ -664,7 +624,7 @@ public class BookDAO {
                 }
             }
 
-            return book;
+            return bookCategory;
         }
 
 

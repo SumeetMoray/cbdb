@@ -1,4 +1,4 @@
-package org.nearbyshops.communitylibrary.Model;
+package org.nearbyshops.communitylibrary;
 
 /**
  * Created by sumeet on 6/8/16.

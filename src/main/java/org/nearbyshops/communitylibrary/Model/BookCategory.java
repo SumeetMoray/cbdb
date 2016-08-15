@@ -38,9 +38,18 @@ public class BookCategory {
     private String imageURL;
     private String backdropImageURL;
     private Integer parentCategoryID;
+    private Integer rt_book_count; // Number of books in this book category
 
     // Getter and Setters
 
+
+    public Integer getRt_book_count() {
+        return rt_book_count;
+    }
+
+    public void setRt_book_count(Integer rt_book_count) {
+        this.rt_book_count = rt_book_count;
+    }
 
     public Integer getBookCategoryID() {
         return bookCategoryID;
