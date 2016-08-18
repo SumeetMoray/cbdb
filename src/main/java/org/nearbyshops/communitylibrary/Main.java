@@ -49,6 +49,15 @@ public class Main {
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
 
+            // Dagger%COMPONENT_NAME%
+            /*mNetComponent = DaggerNetComponent.builder()
+                    // list of modules that are part of this component need to be created here too
+                    .netModule(new NetModule())
+                    .build();*/
+
+//         NetCom        mNetComponent = DaggerNetComponent.create();
+
+
 
         createTables();
 

@@ -7,7 +7,6 @@ import java.sql.Timestamp;
  */
 public class Book {
 
-
     // Table Name
     public static final String TABLE_NAME = "BOOK";
 
@@ -21,6 +20,24 @@ public class Book {
     public static final String BOOK_DESCRIPTION = "BOOK_DESCRIPTION";
     public static final String TIMESTAMP_CREATED = "TIMESTAMP_CREATED";
     public static final String TIMESTAMP_UPDATED = "TIMESTAMP_UPDATED";
+
+    // ! ---- To Be Introduced
+
+    public static final String DATE_OF_PUBLISH = "DATE_OF_PUBLISH";
+    public static final String PUBLISHER_NAME = "PUBLISHER_NAME";
+    public static final String PAGES = "PAGES";
+    public static final String ISBN = "ISBN";
+    public static final String ISO_LANGUAGE_CODE = "ISO_LANGUAGE_CODE";
+
+    // publisher, pages, isbn, language, category, Title
+
+    // Sort Options : Sort By
+    // 1. Date of Publish (Newer First) : 2. Date of Publish (Older First)
+    // 3. Book Rating 4. Title
+
+    // Filter Options : Filter By
+    // 1. Language 2. Publisher 3. Date of Publish [Start - End]
+
 
 
     // CreateTableStatement
