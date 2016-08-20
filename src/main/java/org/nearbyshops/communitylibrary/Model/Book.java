@@ -25,7 +25,7 @@ public class Book {
 
     public static final String DATE_OF_PUBLISH = "DATE_OF_PUBLISH";
     public static final String PUBLISHER_NAME = "PUBLISHER_NAME";
-    public static final String PAGES = "PAGES";
+    public static final String PAGES_TOTAL = "PAGES_TOTAL";
     public static final String ISBN = "ISBN";
     public static final String ISO_LANGUAGE_CODE = "ISO_LANGUAGE_CODE";
 
@@ -47,13 +47,17 @@ public class Book {
 
             + " " + Book.BOOK_ID + " SERIAL PRIMARY KEY,"
             + " " + Book.BOOK_CATEGORY_ID + " INT,"
-            + " " + Book.BOOK_NAME + " VARCHAR(100),"
+            + " " + Book.BOOK_NAME + " VARCHAR(500),"
             + " " + Book.BOOK_COVER_IMAGE_URL + " VARCHAR(100),"
             + " " + Book.BACKDROP_IMAGE_URL + " VARCHAR(100),"
-            + " " + Book.AUTHOR_NAME + " VARCHAR(100),"
+            + " " + Book.AUTHOR_NAME + " VARCHAR(500),"
             + " " + Book.BOOK_DESCRIPTION + " VARCHAR(10000),"
             + " " + Book.TIMESTAMP_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
             + " " + Book.TIMESTAMP_UPDATED + " timestamp with time zone,"
+
+            + " " + Book.DATE_OF_PUBLISH + " timestamp with time zone,"
+            + " " + Book.PUBLISHER_NAME + " VARCHAR(500),"
+            + " " + Book.PAGES_TOTAL + " INT,"
 
             + " FOREIGN KEY(" + Book.BOOK_CATEGORY_ID +") REFERENCES "
             + BookCategory.TABLE_NAME + "(" + BookCategory.BOOK_CATEGORY_ID + ")"
@@ -72,6 +76,10 @@ public class Book {
     private String bookDescription;
     private Timestamp timestampCreated;
     private Timestamp timeStampUpdated;
+
+    private Timestamp dateOfPublish;
+    private String nameOfPublisher;
+    private Integer pagesTotal;
 
     private float rt_rating_avg;
     private float rt_rating_count;
@@ -166,5 +174,30 @@ public class Book {
 
     public void setTimeStampUpdated(Timestamp timeStampUpdated) {
         this.timeStampUpdated = timeStampUpdated;
+    }
+
+
+    public Timestamp getDateOfPublish() {
+        return dateOfPublish;
+    }
+
+    public void setDateOfPublish(Timestamp dateOfPublish) {
+        this.dateOfPublish = dateOfPublish;
+    }
+
+    public String getNameOfPublisher() {
+        return nameOfPublisher;
+    }
+
+    public void setNameOfPublisher(String nameOfPublisher) {
+        this.nameOfPublisher = nameOfPublisher;
+    }
+
+    public Integer getPagesTotal() {
+        return pagesTotal;
+    }
+
+    public void setPagesTotal(Integer pagesTotal) {
+        this.pagesTotal = pagesTotal;
     }
 }

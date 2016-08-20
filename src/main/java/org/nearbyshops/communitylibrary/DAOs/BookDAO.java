@@ -38,8 +38,6 @@ public class BookDAO {
             int idOfInsertedRow = 0;
 
 
-
-
             String insertStatement = "INSERT INTO "
                     + Book.TABLE_NAME
                     + "("
@@ -50,7 +48,11 @@ public class BookDAO {
 
                     + Book.BOOK_DESCRIPTION + ","
                     + Book.TIMESTAMP_UPDATED + ","
-                    + Book.BOOK_NAME
+                    + Book.BOOK_NAME + ","
+
+                    + Book.DATE_OF_PUBLISH + ","
+                    + Book.PUBLISHER_NAME + ","
+                    + Book.PAGES_TOTAL + ""
 
                     + ") VALUES("
                     + "'" + book.getAuthorName() + "',"
@@ -59,8 +61,30 @@ public class BookDAO {
                     + "'" + book.getBookCoverImageURL() + "',"
                     + "'" + book.getBookDescription() + "',"
                     + "'" + "now()" + "',"
-                    + "'" + book.getBookName() + "'"
-                    + ")";
+                    + "'" + book.getBookName() + "',";
+
+
+            System.out.println();
+
+            if(book.getDateOfPublish()==null)
+            {
+                insertStatement = insertStatement + " NULL ,";
+
+                System.out.println("Date of Publish : null ");
+            }
+            else
+            {
+                System.out.println("Date of Publish : " + book.getDateOfPublish().toString());
+
+                insertStatement = insertStatement + "'" + book.getDateOfPublish() + "',";
+            }
+
+
+
+            insertStatement = insertStatement
+                                + "'" + book.getNameOfPublisher() + "',"
+                                + "" + book.getPagesTotal() + ""
+                                + ")";
 
             try {
 
@@ -132,7 +156,11 @@ public class BookDAO {
                     + Book.BACKDROP_IMAGE_URL + " = " + "'" + book.getBackdropImageURL() + "'" + ","
                     + Book.AUTHOR_NAME + " = " + "'" + book.getAuthorName() + "'" + ","
                     + Book.BOOK_DESCRIPTION + " = " + "'" + book.getBookDescription() + "'" + ","
-                    + Book.TIMESTAMP_UPDATED + " = " + "'" + "now()" + "'" + ""
+                    + Book.TIMESTAMP_UPDATED + " = " + "'" + "now()" + "'" + ","
+
+                    + Book.DATE_OF_PUBLISH + " = " + "'" + book.getDateOfPublish() + "'" + ","
+                    + Book.PUBLISHER_NAME + " = " + "'" + book.getNameOfPublisher() + "'" + ","
+                    + Book.PAGES_TOTAL + " = " + "'" + book.getPagesTotal() + "'" + ""
 
                     + " WHERE "
                     + Book.BOOK_ID + " = " + book.getBookID();
@@ -271,6 +299,10 @@ public class BookDAO {
                     + Book.TABLE_NAME + "." + Book.TIMESTAMP_CREATED + ","
                     + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + ","
 
+                    + Book.TABLE_NAME + "." + Book.DATE_OF_PUBLISH + ","
+                    + Book.TABLE_NAME + "." + Book.PUBLISHER_NAME + ","
+                    + Book.TABLE_NAME + "." + Book.PAGES_TOTAL + ","
+
                     +  "avg(" + BookReview.TABLE_NAME + "." + BookReview.RATING + ") as avg_rating" + ","
                     +  "count(" + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + ") as rating_count" + ""
 
@@ -334,7 +366,10 @@ public class BookDAO {
                     + Book.TABLE_NAME + "." + Book.AUTHOR_NAME + ","
                     + Book.TABLE_NAME + "." + Book.BOOK_DESCRIPTION + ","
                     + Book.TABLE_NAME + "." + Book.TIMESTAMP_CREATED + ","
-                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + "";
+                    + Book.TABLE_NAME + "." + Book.TIMESTAMP_UPDATED + ","
+                    + Book.TABLE_NAME + "." + Book.DATE_OF_PUBLISH + ","
+                    + Book.TABLE_NAME + "." + Book.PUBLISHER_NAME + ","
+                    + Book.TABLE_NAME + "." + Book.PAGES_TOTAL + "";
 
 
 
@@ -433,6 +468,10 @@ public class BookDAO {
                     book.setBookName(rs.getString(Book.BOOK_NAME));
                     book.setTimestampCreated(rs.getTimestamp(Book.TIMESTAMP_CREATED));
                     book.setTimeStampUpdated(rs.getTimestamp(Book.TIMESTAMP_UPDATED));
+
+                    book.setDateOfPublish(rs.getTimestamp(Book.DATE_OF_PUBLISH));
+                    book.setNameOfPublisher(rs.getString(Book.PUBLISHER_NAME));
+                    book.setPagesTotal(rs.getInt(Book.PAGES_TOTAL));
 
                     book.setRt_rating_avg(rs.getFloat("avg_rating"));
                     book.setRt_rating_count(rs.getFloat("rating_count"));
@@ -688,6 +727,10 @@ public class BookDAO {
                     book.setBookName(rs.getString(Book.BOOK_NAME));
                     book.setTimestampCreated(rs.getTimestamp(Book.TIMESTAMP_CREATED));
                     book.setTimeStampUpdated(rs.getTimestamp(Book.TIMESTAMP_UPDATED));
+
+                    book.setDateOfPublish(rs.getTimestamp(Book.DATE_OF_PUBLISH));
+                    book.setNameOfPublisher(rs.getString(Book.PUBLISHER_NAME));
+                    book.setPagesTotal(rs.getInt(Book.PAGES_TOTAL));
 
                     System.out.println("Get Book by ID : " + book.getBookID());
                 }
