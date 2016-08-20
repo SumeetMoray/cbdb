@@ -1,6 +1,7 @@
 package org.nearbyshops.communitylibrary.Model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * Created by sumeet on 8/8/16.
@@ -34,7 +35,7 @@ public class BookReview {
             + " " + BookReview.RATING + " INT,"
             + " " + BookReview.REVIEW_TEXT + " VARCHAR(10000),"
             + " " + BookReview.REVIEW_TITLE + " VARCHAR(1000),"
-            + " " + BookReview.REVIEW_DATE + " date,"
+            + " " + BookReview.REVIEW_DATE + "  timestamp with time zone NOT NULL DEFAULT now(),"
 
             + " FOREIGN KEY(" + BookReview.BOOK_ID +") REFERENCES " + Book.TABLE_NAME + "(" + Book.BOOK_ID + "),"
             + " FOREIGN KEY(" + BookReview.MEMBER_ID +") REFERENCES " + Member.TABLE_NAME + "(" + Member.MEMBER_ID + "),"
@@ -51,7 +52,7 @@ public class BookReview {
     private Integer rating;
     private String reviewText;
     private String reviewTitle;
-    private Date reviewDate;
+    private Timestamp reviewDate;
 
     private Member rt_member_profile;
 
@@ -108,14 +109,14 @@ public class BookReview {
         this.reviewTitle = reviewTitle;
     }
 
-    public Date getReviewDate() {
+
+    public Timestamp getReviewDate() {
         return reviewDate;
     }
 
-    public void setReviewDate(Date reviewDate) {
+    public void setReviewDate(Timestamp reviewDate) {
         this.reviewDate = reviewDate;
     }
-
 
     public Member getRt_member_profile() {
         return rt_member_profile;

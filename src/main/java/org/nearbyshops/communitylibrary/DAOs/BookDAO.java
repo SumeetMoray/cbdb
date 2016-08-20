@@ -275,7 +275,7 @@ public class BookDAO {
                     +  "count(" + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + ") as rating_count" + ""
 
                     + " FROM "
-                    + Book.TABLE_NAME  + " LEFT OUTER JOIN " + BookReview.TABLE_NAME
+                    + BookReview.TABLE_NAME  + " RIGHT OUTER JOIN " + Book.TABLE_NAME
 
                     + " ON ("
 //                    + Book.TABLE_NAME + "." + Book.BOOK_CATEGORY_ID + "=" + BookCategory.TABLE_NAME + "." + BookCategory.BOOK_CATEGORY_ID

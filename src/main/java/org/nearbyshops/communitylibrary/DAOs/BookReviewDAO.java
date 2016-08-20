@@ -49,7 +49,7 @@ public class BookReviewDAO {
                     + "" + bookReview.getMemberID() + ","
                     + "" + bookReview.getRating() + ","
                     + "'" + bookReview.getReviewText() + "',"
-                    + "" + "current_date" + ","
+                    + "" + " now() " + ","
                     + "'" + bookReview.getReviewTitle() + "'"
                     + ")";
 
@@ -121,13 +121,13 @@ public class BookReviewDAO {
                     + BookReview.MEMBER_ID + " = " + "" + bookReview.getMemberID() + "" + ","
                     + BookReview.RATING + " = " + "" + bookReview.getRating() + "" + ","
                     + BookReview.REVIEW_TEXT + " = " + "'" + bookReview.getReviewText() + "'" + ","
-
-                    + BookReview.REVIEW_DATE + " = " + "'" + bookReview.getReviewDate() + "'" + ","
                     + BookReview.REVIEW_TITLE + " = " + "'" + bookReview.getReviewTitle() + "'" + ""
+
 
                     + " WHERE "
                     + BookReview.BOOK_REVIEW_ID + " = " + bookReview.getBookReviewID();
 
+            //+ BookReview.REVIEW_DATE + " = " + "'" + bookReview.getReviewDate() + "'" + ","
 
             Connection conn = null;
             Statement stmt = null;
@@ -404,7 +404,7 @@ public class BookReviewDAO {
                     bookReview.setReviewText(rs.getString(BookReview.REVIEW_TEXT));
 
                     bookReview.setReviewTitle(rs.getString(BookReview.REVIEW_TITLE));
-                    bookReview.setReviewDate(rs.getDate(BookReview.REVIEW_DATE));
+                    bookReview.setReviewDate(rs.getTimestamp(BookReview.REVIEW_DATE));
 
                     bookReviewsList.add(bookReview);
                 }
@@ -678,7 +678,7 @@ public class BookReviewDAO {
                     bookReview.setReviewText(rs.getString(BookReview.REVIEW_TEXT));
 
                     bookReview.setReviewTitle(rs.getString(BookReview.REVIEW_TITLE));
-                    bookReview.setReviewDate(rs.getDate(BookReview.REVIEW_DATE));
+                    bookReview.setReviewDate(rs.getTimestamp(BookReview.REVIEW_DATE));
 
                     System.out.println("Get BookReview by ID : " + bookReview.getBookID());
                 }
