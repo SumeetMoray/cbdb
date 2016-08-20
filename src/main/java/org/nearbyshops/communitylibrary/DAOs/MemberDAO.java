@@ -32,52 +32,40 @@ public class MemberDAO {
 
             String insertStatement = "";
 
-            if(member.getDateOfBirth()!=null)
-            {
-                insertStatement = "INSERT INTO "
-                        + Member.TABLE_NAME
-                        + "("
-                        + Member.USER_NAME + ","
-                        + Member.PASSWORD + ","
-                        + Member.MEMBER_NAME + ","
-                        + Member.PROFILE_IMAGE_URL + ","
-                        + Member.CITY + ","
-                        + Member.ABOUT + ","
-                        + Member.DATE_OF_BIRTH + ""
-                        + ") VALUES("
-                        + "'" + member.getUserName() + "',"
-                        + "'" + member.getPassword() + "',"
-                        + "'" + member.getMemberName() + "',"
-                        + "'" + member.getProfileImageURL() + "',"
-                        + "'" + member.getCity() + "',"
-                        + "'" + member.getAbout() + "',"
-                        + "'" + member.getDateOfBirth() + "'"
-                        + ")";
-            }
-            else
-            {
 
-                insertStatement = "INSERT INTO "
-                        + Member.TABLE_NAME
-                        + "("
-                        + Member.USER_NAME + ","
-                        + Member.PASSWORD + ","
-                        + Member.MEMBER_NAME + ","
-                        + Member.PROFILE_IMAGE_URL + ","
-                        + Member.CITY + ","
-                        + Member.ABOUT + ""
-                        + ") VALUES("
-                        + "'" + member.getUserName() + "',"
-                        + "'" + member.getPassword() + "',"
-                        + "'" + member.getMemberName() + "',"
-                        + "'" + member.getProfileImageURL() + "',"
-                        + "'" + member.getCity() + "',"
-                        + "'" + member.getAbout() + "'"
-                        + ")";
+            insertStatement = "INSERT INTO "
+                    + Member.TABLE_NAME
+                    + "("
+                    + Member.USER_NAME + ",";
+
+
+
+            if(member.getPassword()!=null)
+            {
+                insertStatement = insertStatement + Member.PASSWORD + ",";
             }
 
 
+            insertStatement = insertStatement + Member.MEMBER_NAME + ","
+                                + Member.PROFILE_IMAGE_URL + ","
+                                + Member.CITY + ","
+                                + Member.ABOUT + ""
+                                + ") VALUES("
+                                + "'" + member.getUserName() + "',";
 
+
+
+            if(member.getPassword()!=null)
+            {
+                 insertStatement = insertStatement + "'" + member.getPassword() + "',";
+            }
+
+
+            insertStatement = insertStatement + "'" + member.getMemberName() + "',"
+                                                + "'" + member.getProfileImageURL() + "',"
+                                                + "'" + member.getCity() + "',"
+                                                + "'" + member.getAbout() + "'"
+                                                + ")";
 
 
             try {
@@ -141,16 +129,22 @@ public class MemberDAO {
             //item.setItemCategoryID(itemCategoryID);
 
             String updateStatement = "UPDATE "
-
                     + Member.TABLE_NAME
-
                     + " SET "
-                    + Member.USER_NAME + " = " + "'" + member.getUserName() + "'" + ","
-                    + Member.PASSWORD + " = " + "'" + member.getPassword() + "'" + ","
-                    + Member.MEMBER_NAME + " = " + "'" + member.getMemberName() + "'" + ","
-                    + Member.PROFILE_IMAGE_URL + " = " + "'" + member.getProfileImageURL() + "'" + ","
-                    + Member.CITY + " = " + "'" + member.getCity() + "'" + ","
-                    + Member.ABOUT + " = " + "'" + member.getAbout() + "'" ;
+                    + Member.USER_NAME + " = " + "'" + member.getUserName() + "'" + ",";
+
+
+            if(member.getPassword()!=null)
+            {
+                updateStatement = updateStatement
+                        + Member.PASSWORD + " = " + "'" + member.getPassword() + "'" + ",";
+            }
+
+
+            updateStatement = updateStatement + Member.MEMBER_NAME + " = " + "'" + member.getMemberName() + "'" + ","
+                                    + Member.PROFILE_IMAGE_URL + " = " + "'" + member.getProfileImageURL() + "'" + ","
+                                    + Member.CITY + " = " + "'" + member.getCity() + "'" + ","
+                                    + Member.ABOUT + " = " + "'" + member.getAbout() + "'" ;
 
 
             if(member.getDateOfBirth()!=null)
@@ -707,8 +701,15 @@ public class MemberDAO {
                 endUser = new Member();
 
                 endUser.setMemberID(rs.getInt(Member.MEMBER_ID));
-                endUser.setMemberName(rs.getString(Member.USER_NAME));
+                endUser.setMemberName(rs.getString(Member.MEMBER_NAME));
+                endUser.setUserName(rs.getString(Member.USER_NAME));
                 endUser.setPassword(rs.getString(Member.PASSWORD));
+
+                endUser.setProfileImageURL(rs.getString(Member.PROFILE_IMAGE_URL));
+                endUser.setCity(rs.getString(Member.CITY));
+                endUser.setAbout(rs.getString(Member.ABOUT));
+
+
             }
 
 

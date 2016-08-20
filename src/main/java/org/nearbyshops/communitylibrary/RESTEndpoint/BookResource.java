@@ -159,6 +159,7 @@ public class BookResource {
         @Produces(MediaType.APPLICATION_JSON)
         public Response getBooks(
                 @QueryParam("BookCategoryID")Integer bookCategoryID,
+                @QueryParam("FavouriteBookMemberID") Integer favouriteBookMemberID,
                 @QueryParam("SortBy") String sortBy,
                 @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
                 @QueryParam("metadata_only")Boolean metaonly)
@@ -188,7 +189,7 @@ public class BookResource {
                 set_offset = offset;
             }
 
-            BookEndpoint endPoint = Globals.bookDAO.getEndPointMetadata(bookCategoryID);
+            BookEndpoint endPoint = Globals.bookDAO.getEndPointMetadata(bookCategoryID,favouriteBookMemberID);
 
             endPoint.setLimit(set_limit);
             endPoint.setMax_limit(max_limit);
@@ -201,7 +202,7 @@ public class BookResource {
 
                 list =
                         Globals.bookDAO.getBooks(
-                                bookCategoryID,
+                                bookCategoryID,favouriteBookMemberID,
                                 sortBy,set_limit,set_offset
                         );
 

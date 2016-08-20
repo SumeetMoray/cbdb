@@ -22,7 +22,6 @@ import java.util.List;
 @Path("/v1/BookReview")
 public class BookReviewResource {
 
-
 //    BookReviewDAO bookReviewDAO;
 
     public BookReviewResource() {
@@ -179,6 +178,7 @@ public class BookReviewResource {
         public Response getBookReviews(
                 @QueryParam("BookID")Integer bookID,
                 @QueryParam("MemberID")Integer memberID,
+                @QueryParam("GetMember")Boolean getMember,
                 @QueryParam("SortBy") String sortBy,
                 @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
                 @QueryParam("metadata_only")Boolean metaonly)
@@ -224,6 +224,15 @@ public class BookReviewResource {
                                 bookID,memberID,
                                 sortBy,set_limit,set_offset
                         );
+
+
+                if(getMember!=null && getMember)
+                {
+                    for(BookReview bookReview: list)
+                    {
+                        bookReview.setRt_member_profile(Globals.memberDAO.getMember(bookReview.getMemberID()));
+                    }
+                }
 
                 endPoint.setResults(list);
             }

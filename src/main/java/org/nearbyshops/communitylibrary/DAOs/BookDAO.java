@@ -4,6 +4,7 @@ import org.nearbyshops.communitylibrary.Model.Book;
 import org.nearbyshops.communitylibrary.Model.BookCategory;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.BookReview;
+import org.nearbyshops.communitylibrary.Model.FavouriteBook;
 import org.nearbyshops.communitylibrary.ModelEndpoint.BookEndpoint;
 
 import java.sql.Connection;
@@ -35,6 +36,9 @@ public class BookDAO {
             Connection conn = null;
             Statement stmt = null;
             int idOfInsertedRow = 0;
+
+
+
 
             String insertStatement = "INSERT INTO "
                     + Book.TABLE_NAME
@@ -243,9 +247,13 @@ public class BookDAO {
 
         public List<Book> getBooks(
                 Integer bookCategoryID,
+                Integer favouriteBookMemberID,
                 String sortBy,
                 Integer limit, Integer offset
         ) {
+
+            boolean isFirst = true;
+
             String query = "";
 
             String queryNormal = "SELECT * FROM " + Book.TABLE_NAME;
@@ -275,22 +283,39 @@ public class BookDAO {
                     + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + " = " + Book.TABLE_NAME + "." + Book.BOOK_ID + ")";
 
 
+            if(favouriteBookMemberID!=null)
+            {
+                queryJoin = queryJoin +
+                        " INNER JOIN " + FavouriteBook.TABLE_NAME
+                        + " ON (" + Book.TABLE_NAME + "." + Book.BOOK_ID + " = " + FavouriteBook.TABLE_NAME + "."  + FavouriteBook.BOOK_ID + ")"
+                        + " WHERE (" + FavouriteBook.TABLE_NAME + "." + FavouriteBook.MEMBER_ID + " = " + favouriteBookMemberID + ")";
+
+                isFirst = false;
+            }
+
+
             if(bookCategoryID != null)
             {
-                queryJoin = queryJoin + " WHERE "
-                        + Book.TABLE_NAME
+
+
+                String queryPartBookCategory = Book.TABLE_NAME
                         + "."
                         + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
 
 
+                if(isFirst)
+                {
+                    queryJoin = queryJoin + " WHERE " + queryPartBookCategory;
+                    queryNormal = queryNormal + " WHERE " + queryPartBookCategory;
 
-                //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
+                }else
+                {
+                    queryJoin = queryJoin + " AND " + queryPartBookCategory;
+                    queryNormal = queryNormal + " AND " + queryPartBookCategory;
+                }
 
-                queryNormal = queryNormal + " WHERE "
-                        + Book.TABLE_NAME
-                        + "."
-                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
 
+                isFirst = false;
             }
 
 
@@ -463,26 +488,67 @@ public class BookDAO {
 
 
         public BookEndpoint getEndPointMetadata(
-                Integer bookCategoryID)
+                Integer bookCategoryID,
+                Integer favouriteBookMemberID)
         {
 
+            boolean isFirst = true;
 
             String query = "";
 
             String queryNormal = "SELECT "
-                    + "count( DISTINCT " + Book.BOOK_ID + ") as item_count" + ""
+                    + "count(*) as item_count" + ""
                     + " FROM " + Book.TABLE_NAME;
+
+
+            if(favouriteBookMemberID!=null)
+            {
+                queryNormal = queryNormal +
+                        " INNER JOIN " + FavouriteBook.TABLE_NAME
+                        + " ON (" + Book.TABLE_NAME + "." + Book.BOOK_ID + " = " + FavouriteBook.TABLE_NAME + "."  + FavouriteBook.BOOK_ID + ")"
+                        + " WHERE (" + FavouriteBook.TABLE_NAME + "." + FavouriteBook.MEMBER_ID + " = " + favouriteBookMemberID + ")";
+
+                isFirst = false;
+            }
 
 
             if(bookCategoryID != null)
             {
+
+
+                String queryPartBookCategory = Book.TABLE_NAME
+                        + "."
+                        + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+
+
+                if(isFirst)
+                {
+//                    queryJoin = queryJoin + " WHERE " + queryPartBookCategory;
+                    queryNormal = queryNormal + " WHERE " + queryPartBookCategory;
+
+                }else
+                {
+//                    queryJoin = queryJoin + " AND " + queryPartBookCategory;
+                    queryNormal = queryNormal + " AND " + queryPartBookCategory;
+                }
+
+
+                isFirst = false;
+            }
+
+
+
 /*
+
+            if(bookCategoryID != null)
+            {
+*//*
                 queryJoin = queryJoin + " AND "
                         + ItemContract.TABLE_NAME
                         + "."
                         + ItemContract.ITEM_CATEGORY_ID + " = " + itemCategoryID;
 
-*/
+*//*
 
 
                 //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
@@ -492,7 +558,7 @@ public class BookDAO {
                         + "."
                         + Book.BOOK_CATEGORY_ID + " = " + bookCategoryID;
 
-            }
+            }*/
 
 
 

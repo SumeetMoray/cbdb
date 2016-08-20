@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.Model;
 
+import java.sql.Date;
+
 /**
  * Created by sumeet on 8/8/16.
  */
@@ -15,6 +17,10 @@ public class BookReview {
     public static final String MEMBER_ID = "MEMBER_ID";
     public static final String RATING = "RATING";
     public static final String REVIEW_TEXT = "REVIEW_TEXT";
+    public static final String REVIEW_DATE = "REVIEW_DATE";
+    public static final String REVIEW_TITLE = "REVIEW_TITLE";
+
+    // review_date, title
 
 
     // create Table statement
@@ -27,6 +33,8 @@ public class BookReview {
             + " " + BookReview.MEMBER_ID + " INT,"
             + " " + BookReview.RATING + " INT,"
             + " " + BookReview.REVIEW_TEXT + " VARCHAR(10000),"
+            + " " + BookReview.REVIEW_TITLE + " VARCHAR(1000),"
+            + " " + BookReview.REVIEW_DATE + " date,"
 
             + " FOREIGN KEY(" + BookReview.BOOK_ID +") REFERENCES " + Book.TABLE_NAME + "(" + Book.BOOK_ID + "),"
             + " FOREIGN KEY(" + BookReview.MEMBER_ID +") REFERENCES " + Member.TABLE_NAME + "(" + Member.MEMBER_ID + "),"
@@ -42,6 +50,10 @@ public class BookReview {
     private Integer memberID;
     private Integer rating;
     private String reviewText;
+    private String reviewTitle;
+    private Date reviewDate;
+
+    private Member rt_member_profile;
 
 
     // getter and Setter Methods
@@ -85,5 +97,31 @@ public class BookReview {
 
     public void setReviewText(String reviewText) {
         this.reviewText = reviewText;
+    }
+
+
+    public String getReviewTitle() {
+        return reviewTitle;
+    }
+
+    public void setReviewTitle(String reviewTitle) {
+        this.reviewTitle = reviewTitle;
+    }
+
+    public Date getReviewDate() {
+        return reviewDate;
+    }
+
+    public void setReviewDate(Date reviewDate) {
+        this.reviewDate = reviewDate;
+    }
+
+
+    public Member getRt_member_profile() {
+        return rt_member_profile;
+    }
+
+    public void setRt_member_profile(Member rt_member_profile) {
+        this.rt_member_profile = rt_member_profile;
     }
 }

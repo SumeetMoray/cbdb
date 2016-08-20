@@ -31,19 +31,26 @@ public class BookReviewDAO {
             Statement stmt = null;
             int idOfInsertedRow = 0;
 
+
+
             String insertStatement = "INSERT INTO "
                     + BookReview.TABLE_NAME
                     + "("
-
                     + BookReview.BOOK_ID + ","
                     + BookReview.MEMBER_ID + ","
                     + BookReview.RATING + ","
-                    + BookReview.REVIEW_TEXT + ""
+                    + BookReview.REVIEW_TEXT + ","
+                    + BookReview.REVIEW_DATE + ","
+                    + BookReview.REVIEW_TITLE + ""
+
+
                     + ") VALUES("
                     + "" + bookReview.getBookID() + ","
                     + "" + bookReview.getMemberID() + ","
-                    + "'" + bookReview.getRating() + "',"
-                    + "'" + bookReview.getReviewText() + "'"
+                    + "" + bookReview.getRating() + ","
+                    + "'" + bookReview.getReviewText() + "',"
+                    + "" + "current_date" + ","
+                    + "'" + bookReview.getReviewTitle() + "'"
                     + ")";
 
             try {
@@ -113,7 +120,10 @@ public class BookReviewDAO {
                     + BookReview.BOOK_ID + " = " + "" + bookReview.getBookID() + "" + ","
                     + BookReview.MEMBER_ID + " = " + "" + bookReview.getMemberID() + "" + ","
                     + BookReview.RATING + " = " + "" + bookReview.getRating() + "" + ","
-                    + BookReview.REVIEW_TEXT + " = " + "" + bookReview.getReviewText() + "" + ""
+                    + BookReview.REVIEW_TEXT + " = " + "'" + bookReview.getReviewText() + "'" + ","
+
+                    + BookReview.REVIEW_DATE + " = " + "'" + bookReview.getReviewDate() + "'" + ","
+                    + BookReview.REVIEW_TITLE + " = " + "'" + bookReview.getReviewTitle() + "'" + ""
 
                     + " WHERE "
                     + BookReview.BOOK_REVIEW_ID + " = " + bookReview.getBookReviewID();
@@ -233,6 +243,11 @@ public class BookReviewDAO {
                 String sortBy,
                 Integer limit, Integer offset
         ) {
+
+
+
+            boolean isFirst = true;
+
             String query = "";
 
             String queryNormal = "SELECT * FROM " + BookReview.TABLE_NAME;
@@ -244,7 +259,10 @@ public class BookReviewDAO {
                     + BookReview.TABLE_NAME + "." + BookReview.BOOK_ID + ","
                     + BookReview.TABLE_NAME + "." + BookReview.MEMBER_ID + ","
                     + BookReview.TABLE_NAME + "." + BookReview.RATING + ","
-                    + BookReview.TABLE_NAME + "." + BookReview.REVIEW_TEXT + ""
+                    + BookReview.TABLE_NAME + "." + BookReview.REVIEW_TEXT + ","
+                    + BookReview.TABLE_NAME + "." + BookReview.REVIEW_DATE + ","
+                    + BookReview.TABLE_NAME + "." + BookReview.REVIEW_TITLE + ""
+
 
                     + " FROM " + BookReview.TABLE_NAME;
 
@@ -261,20 +279,33 @@ public class BookReviewDAO {
                         + BookReview.TABLE_NAME
                         + "."
                         + BookReview.BOOK_ID + " = " + bookID;
+
+                isFirst = false;
             }
 
 
             if(memberID != null)
             {
-                queryJoin = queryJoin + " WHERE "
-                        + BookReview.TABLE_NAME
-                        + "."
+
+                String queryPartMember =
+                        BookReview.TABLE_NAME
+                                + "."
                         + BookReview.MEMBER_ID + " = " + memberID;
 
-                queryNormal = queryNormal + " WHERE "
-                        + BookReview.TABLE_NAME
-                        + "."
-                        + BookReview.MEMBER_ID + " = " + memberID;
+                if(isFirst)
+                {
+                    queryJoin = queryJoin + " WHERE " + queryPartMember;
+                    queryNormal = queryNormal + " WHERE " + queryPartMember;
+
+                }else
+                {
+                    queryJoin = queryJoin + " AND " + queryPartMember;
+                    queryNormal = queryNormal + " AND " + queryPartMember;
+                }
+
+
+                isFirst = false;
+
             }
 
 
@@ -372,6 +403,9 @@ public class BookReviewDAO {
                     bookReview.setRating(rs.getInt(BookReview.RATING));
                     bookReview.setReviewText(rs.getString(BookReview.REVIEW_TEXT));
 
+                    bookReview.setReviewTitle(rs.getString(BookReview.REVIEW_TITLE));
+                    bookReview.setReviewDate(rs.getDate(BookReview.REVIEW_DATE));
+
                     bookReviewsList.add(bookReview);
                 }
 
@@ -427,6 +461,8 @@ public class BookReviewDAO {
         {
 
 
+            boolean isFirst = true;
+
             String query = "";
 
             String queryNormal = "SELECT "
@@ -434,15 +470,55 @@ public class BookReviewDAO {
                     + " FROM " + BookReview.TABLE_NAME;
 
 
+
+
             if(bookID != null)
             {
+
+                queryNormal = queryNormal + " WHERE "
+                        + BookReview.TABLE_NAME
+                        + "."
+                        + BookReview.BOOK_ID + " = " + bookID;
+
+                isFirst = false;
+            }
+
+
+            if(memberID != null)
+            {
+
+                String queryPartMember =
+                        BookReview.TABLE_NAME
+                                + "."
+                                + BookReview.MEMBER_ID + " = " + memberID;
+
+                if(isFirst)
+                {
+                    queryNormal = queryNormal + " WHERE " + queryPartMember;
+
+                }else
+                {
+                    queryNormal = queryNormal + " AND " + queryPartMember;
+                }
+
+
+                isFirst = false;
+
+            }
+
+
+
+
 /*
+            if(bookID != null)
+            {
+*//*
                 queryJoin = queryJoin + " AND "
                         + ItemContract.TABLE_NAME
                         + "."
                         + ItemContract.ITEM_CATEGORY_ID + " = " + itemCategoryID;
 
-*/
+*//*
 
 
                 //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
@@ -457,13 +533,13 @@ public class BookReviewDAO {
 
             if(memberID != null)
             {
-/*
+*//*
                 queryJoin = queryJoin + " AND "
                         + ItemContract.TABLE_NAME
                         + "."
                         + ItemContract.ITEM_CATEGORY_ID + " = " + itemCategoryID;
 
-*/
+*//*
 
 
                 //" WHERE ITEM_CATEGORY_ID = " + itemCategoryID
@@ -472,7 +548,7 @@ public class BookReviewDAO {
                         + BookReview.TABLE_NAME
                         + "."
                         + BookReview.MEMBER_ID + " = " + memberID;
-            }
+            }*/
 
 
 
@@ -562,6 +638,8 @@ public class BookReviewDAO {
 
 
 
+
+
         public BookReview getBookReview(int bookReviewID)
         {
 
@@ -598,6 +676,9 @@ public class BookReviewDAO {
                     bookReview.setMemberID(rs.getInt(BookReview.MEMBER_ID));
                     bookReview.setRating(rs.getInt(BookReview.RATING));
                     bookReview.setReviewText(rs.getString(BookReview.REVIEW_TEXT));
+
+                    bookReview.setReviewTitle(rs.getString(BookReview.REVIEW_TITLE));
+                    bookReview.setReviewDate(rs.getDate(BookReview.REVIEW_DATE));
 
                     System.out.println("Get BookReview by ID : " + bookReview.getBookID());
                 }
