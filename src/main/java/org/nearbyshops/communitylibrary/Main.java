@@ -4,6 +4,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.Model.*;
 
 import java.io.IOException;
@@ -90,6 +91,30 @@ public class Main {
             stmt.executeUpdate(Book.createTableBookPostgres);
             stmt.executeUpdate(FavouriteBook.createTableFavouriteBookPostgres);
             stmt.executeUpdate(BookReview.createTableBookReviewPostgres);
+
+
+            // Insert the root category whose ID is 1
+
+            String insertItemCategory = "";
+
+            // The root ItemCategory has id 1. If the root category does not exist then insert it.
+            if(Globals.bookCategoryDAO.getBookCategory(1) == null)
+            {
+
+                insertItemCategory = "INSERT INTO "
+                        + BookCategory.TABLE_NAME
+                        + "("
+                        + BookCategory.BOOK_CATEGORY_ID + ","
+                        + BookCategory.PARENT_CATEGORY_ID + ","
+                        + BookCategory.BOOK_CATEGORY_NAME + "" + ") VALUES("
+                        + "" + "1"	+ ","
+                        + "" + "NULL" + ","
+                        + "'" + "ROOT"	+ "'" + ")";
+
+                stmt.executeUpdate(insertItemCategory);
+
+            }
+
 
 
             System.out.println("Tables Created ... !");
