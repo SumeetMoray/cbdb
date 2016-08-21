@@ -156,9 +156,15 @@ public class BookDAO {
                     + Book.BACKDROP_IMAGE_URL + " = " + "'" + book.getBackdropImageURL() + "'" + ","
                     + Book.AUTHOR_NAME + " = " + "'" + book.getAuthorName() + "'" + ","
                     + Book.BOOK_DESCRIPTION + " = " + "'" + book.getBookDescription() + "'" + ","
-                    + Book.TIMESTAMP_UPDATED + " = " + "'" + "now()" + "'" + ","
+                    + Book.TIMESTAMP_UPDATED + " = " + "'" + "now()" + "'" + ",";
 
-                    + Book.DATE_OF_PUBLISH + " = " + "'" + book.getDateOfPublish() + "'" + ","
+
+            if(book.getDateOfPublish()!=null)
+            {
+                updateStatement = updateStatement + Book.DATE_OF_PUBLISH + " = " + "'" + book.getDateOfPublish() + "'" + ",";
+            }
+
+            updateStatement = updateStatement
                     + Book.PUBLISHER_NAME + " = " + "'" + book.getNameOfPublisher() + "'" + ","
                     + Book.PAGES_TOTAL + " = " + "'" + book.getPagesTotal() + "'" + ""
 
