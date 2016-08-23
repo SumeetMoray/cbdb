@@ -8,9 +8,13 @@ import java.sql.Timestamp;
 public class Book {
 
     // Table Name
+
     public static final String TABLE_NAME = "BOOK";
 
     // column Names
+
+
+
     public static final String BOOK_ID = "BOOK_ID";
     public static final String BOOK_CATEGORY_ID = "BOOK_CATEGORY_ID"; // foreign Key
     public static final String BOOK_NAME = "BOOK_NAME";
@@ -47,16 +51,16 @@ public class Book {
 
             + " " + Book.BOOK_ID + " SERIAL PRIMARY KEY,"
             + " " + Book.BOOK_CATEGORY_ID + " INT,"
-            + " " + Book.BOOK_NAME + " VARCHAR(500),"
-            + " " + Book.BOOK_COVER_IMAGE_URL + " VARCHAR(100),"
-            + " " + Book.BACKDROP_IMAGE_URL + " VARCHAR(100),"
-            + " " + Book.AUTHOR_NAME + " VARCHAR(500),"
-            + " " + Book.BOOK_DESCRIPTION + " VARCHAR(10000),"
+            + " " + Book.BOOK_NAME + " text,"
+            + " " + Book.BOOK_COVER_IMAGE_URL + " text,"
+            + " " + Book.BACKDROP_IMAGE_URL + " text,"
+            + " " + Book.AUTHOR_NAME + " text,"
+            + " " + Book.BOOK_DESCRIPTION + " text,"
             + " " + Book.TIMESTAMP_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
             + " " + Book.TIMESTAMP_UPDATED + " timestamp with time zone,"
 
             + " " + Book.DATE_OF_PUBLISH + " timestamp with time zone,"
-            + " " + Book.PUBLISHER_NAME + " VARCHAR(500),"
+            + " " + Book.PUBLISHER_NAME + " text,"
             + " " + Book.PAGES_TOTAL + " INT,"
 
             + " FOREIGN KEY(" + Book.BOOK_CATEGORY_ID +") REFERENCES "

@@ -21,9 +21,9 @@ public class BookCategory {
             + BookCategory.TABLE_NAME + "("
 
             + " " + BookCategory.BOOK_CATEGORY_ID + " SERIAL PRIMARY KEY,"
-            + " " + BookCategory.BOOK_CATEGORY_NAME + " VARCHAR(100),"
-            + " " + BookCategory.IMAGE_URL + " VARCHAR(100),"
-            + " " + BookCategory.BACKDROP_IMAGE_URL + " VARCHAR(100),"
+            + " " + BookCategory.BOOK_CATEGORY_NAME + " text,"
+            + " " + BookCategory.IMAGE_URL + " text,"
+            + " " + BookCategory.BACKDROP_IMAGE_URL + " text,"
             + " " + BookCategory.PARENT_CATEGORY_ID + " INT,"
 
             + " FOREIGN KEY(" + BookCategory.PARENT_CATEGORY_ID +") REFERENCES "

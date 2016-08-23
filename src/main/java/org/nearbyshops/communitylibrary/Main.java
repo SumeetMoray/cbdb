@@ -91,6 +91,7 @@ public class Main {
             stmt.executeUpdate(Book.createTableBookPostgres);
             stmt.executeUpdate(FavouriteBook.createTableFavouriteBookPostgres);
             stmt.executeUpdate(BookReview.createTableBookReviewPostgres);
+            stmt.executeUpdate(BookMeetup.createTableBookMeetupPostgres);
 
 
             // Insert the root category whose ID is 1

@@ -1,6 +1,7 @@
 package org.nearbyshops.communitylibrary.Globals;
 
 import org.nearbyshops.communitylibrary.DAOs.*;
+import org.nearbyshops.communitylibrary.Model.BookMeetup;
 
 /**
  * Created by sumeet on 9/8/16.
@@ -14,6 +15,7 @@ public class Globals {
     public static BookReviewDAO bookReviewDAO = new BookReviewDAO();
 
     public static FavoriteBookDAO favoriteBookDAO = new FavoriteBookDAO();
+    public static BookMeetupDAO bookMeetupDAO = new BookMeetupDAO();
 
 
 }
