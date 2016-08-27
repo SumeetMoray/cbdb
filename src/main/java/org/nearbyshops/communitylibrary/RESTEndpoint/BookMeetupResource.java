@@ -122,6 +122,7 @@ public class BookMeetupResource {
                 @QueryParam("MemberLongitude") Double memberLongitude,
                 @QueryParam("MemberLatitude") Double memberLatitude,
                 @QueryParam("ProximityLimit") Double proximityMaximum,
+                @QueryParam("SearchString") String stringString,
                 @QueryParam("SortBy") String sortBy,
                 @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
                 @QueryParam("metadata_only")Boolean metaonly)
@@ -167,7 +168,7 @@ public class BookMeetupResource {
 
                 list =
                         Globals.bookMeetupDAO.getBookMeetup(
-                                memberLongitude,memberLatitude,proximityMaximum,
+                                memberLongitude,memberLatitude,proximityMaximum,stringString,
                                 sortBy,set_limit,set_offset
                         );
 

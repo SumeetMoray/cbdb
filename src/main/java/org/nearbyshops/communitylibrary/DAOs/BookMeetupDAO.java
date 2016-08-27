@@ -262,6 +262,7 @@ public class BookMeetupDAO {
                 Double memberLongitude,
                 Double memberLatitude,
                 Double proximityMaximum,
+                String searchString,
                 String sortBy,
                 Integer limit, Integer offset
         ) {
@@ -324,28 +325,44 @@ public class BookMeetupDAO {
                         + proximityMaximum ;
 
 
-                if(isFirst)
-                {
-                    queryNormal = queryNormal + " WHERE ";
-                    queryJoin = queryJoin + " WHERE ";
+                queryNormal = queryNormal + " WHERE ";
+                queryJoin = queryJoin + " WHERE ";
 
-                    // reset the flag
+                // reset the flag
 
-
-                }else
-                {
-                    queryNormal = queryNormal + " AND ";
-                    queryJoin = queryJoin + " AND ";
-                }
-
+                isFirst = false;
 
 
                 queryNormal = queryNormal + queryPartProximity;
 
                 queryJoin = queryJoin + queryPartProximity;
 
-                isFirst = false;
 
+
+            }
+
+
+            if(searchString !=null)
+            {
+                String queryPartSearch = BookMeetup.TABLE_NAME + "." + BookMeetup.MEETUP_NAME +" ilike '%" + searchString + "%'"
+                        + " or " + BookMeetup.TABLE_NAME + "." + BookMeetup.MEETUP_PURPOSE + " ilike '%" + searchString + "%'"
+                        + " or " + BookMeetup.TABLE_NAME + "." + BookMeetup.VENUE + " ilike '%" + searchString + "%'";
+
+
+
+                if(isFirst)
+                {
+                    queryJoin = queryJoin + " WHERE " + queryPartSearch;
+                    queryNormal = queryNormal + " WHERE " + queryPartSearch;
+
+                    isFirst = false;
+                }
+                else
+                {
+
+                    queryJoin = queryJoin + " AND " + queryPartSearch;
+                    queryNormal = queryNormal + " AND " + queryPartSearch;
+                }
             }
 
 
@@ -398,6 +415,10 @@ public class BookMeetupDAO {
 
 
             query = queryJoin;
+
+
+            System.out.println(queryJoin);
+
 
             /*
 

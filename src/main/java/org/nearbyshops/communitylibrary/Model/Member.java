@@ -27,12 +27,12 @@ public class Member {
             "CREATE TABLE IF NOT EXISTS " + Member.TABLE_NAME + "("
 
                     + " " + Member.MEMBER_ID + " SERIAL PRIMARY KEY,"
-                    + " " + Member.USER_NAME + " VARCHAR(100),"
-                    + " " + Member.PASSWORD + " VARCHAR(100),"
-                    + " " + Member.MEMBER_NAME + " VARCHAR(100),"
-                    + " " + Member.PROFILE_IMAGE_URL + " VARCHAR(300),"
-                    + " " + Member.CITY + " VARCHAR(100),"
-                    + " " + Member.ABOUT + " VARCHAR(1000),"
+                    + " " + Member.USER_NAME + " text,"
+                    + " " + Member.PASSWORD + " text,"
+                    + " " + Member.MEMBER_NAME + " text,"
+                    + " " + Member.PROFILE_IMAGE_URL + " text,"
+                    + " " + Member.CITY + " text,"
+                    + " " + Member.ABOUT + " text,"
                     + " " + Member.DATE_OF_BIRTH + " timestamp with time zone,"
                     + " UNIQUE (" + Member.USER_NAME + ")"
 

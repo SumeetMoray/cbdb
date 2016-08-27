@@ -33,8 +33,8 @@ public class BookReview {
             + " " + BookReview.BOOK_ID + " INT,"
             + " " + BookReview.MEMBER_ID + " INT,"
             + " " + BookReview.RATING + " INT,"
-            + " " + BookReview.REVIEW_TEXT + " VARCHAR(10000),"
-            + " " + BookReview.REVIEW_TITLE + " VARCHAR(1000),"
+            + " " + BookReview.REVIEW_TEXT + " text,"
+            + " " + BookReview.REVIEW_TITLE + " text,"
             + " " + BookReview.REVIEW_DATE + "  timestamp with time zone NOT NULL DEFAULT now(),"
 
             + " FOREIGN KEY(" + BookReview.BOOK_ID +") REFERENCES " + Book.TABLE_NAME + "(" + Book.BOOK_ID + "),"
