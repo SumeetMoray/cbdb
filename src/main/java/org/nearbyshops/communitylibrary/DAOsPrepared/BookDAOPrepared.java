@@ -1,8 +1,7 @@
-package org.nearbyshops.communitylibrary.DAOs;
+package org.nearbyshops.communitylibrary.DAOsPrepared;
 
-import org.nearbyshops.communitylibrary.Model.Book;
-import org.nearbyshops.communitylibrary.Model.BookCategory;
 import org.nearbyshops.communitylibrary.JDBCContract;
+import org.nearbyshops.communitylibrary.Model.Book;
 import org.nearbyshops.communitylibrary.Model.BookReview;
 import org.nearbyshops.communitylibrary.Model.FavouriteBook;
 import org.nearbyshops.communitylibrary.ModelEndpoint.BookEndpoint;
@@ -15,7 +14,7 @@ import java.util.List;
 /**
  * Created by sumeet on 8/8/16.
  */
-public class BookDAO {
+public class BookDAOPrepared {
 
 
         @Override

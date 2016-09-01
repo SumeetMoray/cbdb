@@ -22,7 +22,7 @@ import java.util.List;
 @Path("/v1/BookReview")
 public class BookReviewResource {
 
-//    BookReviewDAO bookReviewDAO;
+//    BookReviewDAOPrepared bookReviewDAO;
 
     public BookReviewResource() {
 

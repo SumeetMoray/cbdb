@@ -22,7 +22,7 @@ public class BookResource {
         @Consumes(MediaType.APPLICATION_JSON)
         public Response saveBook(Book book)
         {
-            int idOfInsertedRow = Globals.bookDAO.saveBook(book);
+            int idOfInsertedRow = Globals.bookDAO.saveBookPrepared(book);
 
             book.setBookID(idOfInsertedRow);
 
@@ -53,12 +53,12 @@ public class BookResource {
         @Path("/{BookID}")
         @Produces(MediaType.APPLICATION_JSON)
         @Consumes(MediaType.APPLICATION_JSON)
-        public Response updateItem(Book book, @PathParam("BookID")int bookID)
+        public Response updateBook(Book book, @PathParam("BookID")int bookID)
         {
 
             book.setBookID(bookID);
 
-            int rowCount = Globals.bookDAO.updateBook(book);
+            int rowCount = Globals.bookDAO.updateBookPrepared(book);
 
             if(rowCount >= 1)
             {
