@@ -1,6 +1,7 @@
 package org.nearbyshops.communitylibrary.RESTEndpoint;
 
 import org.nearbyshops.communitylibrary.DAOs.BookReviewDAO;
+import org.nearbyshops.communitylibrary.DAOsPrepared.BookReviewDAOPrepared;
 import org.nearbyshops.communitylibrary.DaggerComponentBuilder;
 import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.Model.Book;
@@ -15,6 +16,8 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 
+import static org.nearbyshops.communitylibrary.Globals.Globals.bookReviewDAO;
+
 /**
  * Created by sumeet on 9/8/16.
  */
@@ -22,7 +25,8 @@ import java.util.List;
 @Path("/v1/BookReview")
 public class BookReviewResource {
 
-//    BookReviewDAOPrepared bookReviewDAO;
+
+//    BookReviewDAO bookReviewDAO;
 
     public BookReviewResource() {
 
@@ -76,7 +80,7 @@ public class BookReviewResource {
 
 //            int rowCount = Globals.bookDAO.updateBook(book);
 
-            int rowCount = Globals.bookReviewDAO.updateBookReview(bookReview);
+            int rowCount = bookReviewDAO.updateBookReview(bookReview);
 
 
             if(rowCount >= 1)
@@ -110,7 +114,7 @@ public class BookReviewResource {
 
             for(BookReview item : bookReviewsList)
             {
-                rowCountSum = rowCountSum + Globals.bookReviewDAO.updateBookReview(item);
+                rowCountSum = rowCountSum + bookReviewDAO.updateBookReview(item);
             }
 
             if(rowCountSum ==  bookReviewsList.size())
@@ -148,7 +152,7 @@ public class BookReviewResource {
         public Response deleteItem(@PathParam("BookReviewID")int bookReviewID)
         {
 
-            int rowCount = Globals.bookReviewDAO.deleteBookReview(bookReviewID);
+            int rowCount = bookReviewDAO.deleteBookReview(bookReviewID);
 
             if(rowCount>=1)
             {
@@ -208,7 +212,7 @@ public class BookReviewResource {
                 set_offset = offset;
             }
 
-            BookReviewEndpoint endPoint = Globals.bookReviewDAO.getEndPointMetadata(bookID,memberID);
+            BookReviewEndpoint endPoint = bookReviewDAO.getEndPointMetadata(bookID,memberID);
 
             endPoint.setLimit(set_limit);
             endPoint.setMax_limit(max_limit);
@@ -220,7 +224,7 @@ public class BookReviewResource {
             if(metaonly==null || (!metaonly)) {
 
                 list =
-                        Globals.bookReviewDAO.getBookReviews(
+                        bookReviewDAO.getBookReviews(
                                 bookID,memberID,
                                 sortBy,set_limit,set_offset
                         );
@@ -260,7 +264,7 @@ public class BookReviewResource {
 
             //marker
 
-            BookReview item = Globals.bookReviewDAO.getBookReview(bookReviewID);
+            BookReview item = bookReviewDAO.getBookReview(bookReviewID);
 
             if(item!= null)
             {

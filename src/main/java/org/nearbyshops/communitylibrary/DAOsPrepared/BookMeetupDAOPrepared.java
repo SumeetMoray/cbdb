@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.DAOsPrepared;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.Book;
 import org.nearbyshops.communitylibrary.Model.BookMeetup;
@@ -16,6 +18,8 @@ import java.util.List;
 public class BookMeetupDAOPrepared {
 
 
+    HikariDataSource dataSource = Globals.getDataSource();
+
         @Override
         protected void finalize() throws Throwable {
             // TODO Auto-generated method stub
@@ -28,7 +32,7 @@ public class BookMeetupDAOPrepared {
 
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int idOfInsertedRow = 0;
 
 
@@ -39,44 +43,30 @@ public class BookMeetupDAOPrepared {
                     + BookMeetup.VENUE + ","
                     + BookMeetup.LONGITUDE + ","
                     + BookMeetup.LATITUDE + ","
+
                     + BookMeetup.MEETUP_NAME + ","
                     + BookMeetup.MEETUP_PURPOSE + ","
                     + BookMeetup.POSTER_URL + ","
+
                     + BookMeetup.DATE_AND_TIME + ""
 
-                    + ") VALUES("
-
-                    + "'" + bookMeetup.getVenue() + "',"
-                    + "" + bookMeetup.getLongitude() + ","
-                    + "" + bookMeetup.getLatitude() + ","
-                    + "'" + bookMeetup.getMeetupName() + "',"
-                    + "'" + bookMeetup.getMeetupPurpose() + "',"
-                    + "'" + bookMeetup.getPosterURL() + "',";
-
-
-            if(bookMeetup.getDateAndTime()==null)
-            {
-                insertStatement = insertStatement + " NULL " + ")";
-
-            }else
-            {
-                insertStatement = insertStatement + "'" + bookMeetup.getDateAndTime() + "'" + ")";
-            }
-
-
+                    + ") VALUES(?,?,?, ?,?,? ,?)";
 
             try {
+                conn = dataSource.getConnection();
 
-                conn = DriverManager.getConnection(
-                        JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                statement = conn.prepareStatement(insertStatement,PreparedStatement.RETURN_GENERATED_KEYS);
+                statement.setString(1,bookMeetup.getVenue());
+                statement.setDouble(2,bookMeetup.getLongitude());
+                statement.setDouble(3,bookMeetup.getLatitude());
+                statement.setString(4,bookMeetup.getMeetupName());
+                statement.setString(5,bookMeetup.getMeetupPurpose());
+                statement.setString(6,bookMeetup.getPosterURL());
+                statement.setTimestamp(7,bookMeetup.getDateAndTime());
 
-                stmt = conn.createStatement();
+                idOfInsertedRow = statement.executeUpdate();
 
-                idOfInsertedRow = stmt.executeUpdate(insertStatement,Statement.RETURN_GENERATED_KEYS);
-
-                ResultSet rs = stmt.getGeneratedKeys();
+                ResultSet rs = statement.getGeneratedKeys();
 
                 if(rs.next())
                 {
@@ -94,8 +84,8 @@ public class BookMeetupDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
 
                 }
                 catch (SQLException e) {
@@ -127,45 +117,42 @@ public class BookMeetupDAOPrepared {
 
             String updateStatement = "UPDATE " + BookMeetup.TABLE_NAME
                     + " SET "
-                    + BookMeetup.VENUE + " = " + "'" + bookMeetup.getVenue() + "'" + ","
-                    + BookMeetup.LONGITUDE + " = " + "'" + bookMeetup.getLongitude() + "'" + ","
-                    + BookMeetup.LATITUDE + " = " + "'" + bookMeetup.getLatitude() + "'" + ","
-                    + BookMeetup.MEETUP_NAME + " = " + "'" + bookMeetup.getMeetupName() + "'" + ","
-                    + BookMeetup.MEETUP_PURPOSE + " = " + "'" + bookMeetup.getMeetupPurpose() + "'" + ","
-                    + BookMeetup.POSTER_URL + " = " + "'" + bookMeetup.getPosterURL() + "'" + ",";
+                    + BookMeetup.VENUE + " = ?,"
+                    + BookMeetup.LONGITUDE + " = ?,"
+                    + BookMeetup.LATITUDE + " = ?,"
 
+                    + BookMeetup.MEETUP_NAME + " = ?,"
+                    + BookMeetup.MEETUP_PURPOSE + " = ?,"
+                    + BookMeetup.POSTER_URL + " = ?,"
 
-            if(bookMeetup.getDateAndTime()==null)
-            {
-                updateStatement = updateStatement
-                        + BookMeetup.DATE_AND_TIME + " = " + " NULL " + "";
-            }else
-            {
-                updateStatement = updateStatement
-                        + BookMeetup.DATE_AND_TIME + " = " + "'" + bookMeetup.getDateAndTime() + "'" + "";
-            }
+                    + BookMeetup.DATE_AND_TIME + " = ?";
+
 
             updateStatement = updateStatement + " WHERE "
-                    + BookMeetup.BOOK_MEETUP_ID + " = " + bookMeetup.getBookMeetupID();
-
-
+                    + BookMeetup.BOOK_MEETUP_ID + " = ?" ;
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
 
             int rowCountUpdated = 0;
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(updateStatement);
 
-                stmt = conn.createStatement();
+                statement.setString(1,bookMeetup.getVenue());
+                statement.setDouble(2,bookMeetup.getLongitude());
+                statement.setDouble(3,bookMeetup.getLatitude());
 
-                rowCountUpdated = stmt.executeUpdate(updateStatement);
+                statement.setString(4,bookMeetup.getMeetupName());
+                statement.setString(5,bookMeetup.getMeetupPurpose());
+                statement.setString(6,bookMeetup.getPosterURL());
 
+                statement.setTimestamp(7,bookMeetup.getDateAndTime());
+                statement.setInt(8,bookMeetup.getBookMeetupID());
 
+                rowCountUpdated = statement.executeUpdate();
                 System.out.println("Total rows updated: " + rowCountUpdated);
 
 
@@ -179,8 +166,8 @@ public class BookMeetupDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -205,21 +192,19 @@ public class BookMeetupDAOPrepared {
         {
 
             String deleteStatement = "DELETE FROM " + BookMeetup.TABLE_NAME
-                    + " WHERE " + BookMeetup.BOOK_MEETUP_ID + " = " + bookMeetupID;
+                    + " WHERE " + BookMeetup.BOOK_MEETUP_ID + " = ?";
 
             Connection conn= null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int rowCountDeleted = 0;
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
 
-                stmt = conn.createStatement();
+                statement = conn.prepareStatement(deleteStatement);
+                statement.setInt(1,bookMeetupID);
 
-                rowCountDeleted = stmt.executeUpdate(deleteStatement);
-
+                rowCountDeleted = statement.executeUpdate();
                 System.out.println("Rows Deleted: " + rowCountDeleted);
 
 
@@ -234,8 +219,8 @@ public class BookMeetupDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -445,10 +430,7 @@ public class BookMeetupDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
 
                 rs = stmt.executeQuery(query);
@@ -600,12 +582,9 @@ public class BookMeetupDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
                 while(rs.next())
@@ -679,12 +658,9 @@ public class BookMeetupDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
 

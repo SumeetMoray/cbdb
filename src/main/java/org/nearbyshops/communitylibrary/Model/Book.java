@@ -82,6 +82,7 @@ public class Book {
     private Timestamp timeStampUpdated;
 
     private Timestamp dateOfPublish;
+//    private long dateOfPublishInMillis;
     private String nameOfPublisher;
     private Integer pagesTotal;
 

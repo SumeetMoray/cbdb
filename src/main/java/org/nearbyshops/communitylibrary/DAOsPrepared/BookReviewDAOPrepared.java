@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.DAOsPrepared;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.BookReview;
 import org.nearbyshops.communitylibrary.ModelEndpoint.BookReviewEndpoint;
@@ -15,6 +17,9 @@ import java.util.List;
 public class BookReviewDAOPrepared {
 
 
+        private HikariDataSource dataSource = Globals.getDataSource();
+
+
         @Override
         protected void finalize() throws Throwable {
             // TODO Auto-generated method stub
@@ -27,7 +32,7 @@ public class BookReviewDAOPrepared {
 
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int idOfInsertedRow = 0;
 
 
@@ -38,32 +43,28 @@ public class BookReviewDAOPrepared {
                     + BookReview.BOOK_ID + ","
                     + BookReview.MEMBER_ID + ","
                     + BookReview.RATING + ","
+
                     + BookReview.REVIEW_TEXT + ","
-                    + BookReview.REVIEW_DATE + ","
                     + BookReview.REVIEW_TITLE + ""
 
-
-                    + ") VALUES("
-                    + "" + bookReview.getBookID() + ","
-                    + "" + bookReview.getMemberID() + ","
-                    + "" + bookReview.getRating() + ","
-                    + "'" + bookReview.getReviewText() + "',"
-                    + "" + " now() " + ","
-                    + "'" + bookReview.getReviewTitle() + "'"
-                    + ")";
+                    + ") VALUES(?,?,?,?,?)";
 
             try {
 
-                conn = DriverManager.getConnection(
-                        JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
 
-                stmt = conn.createStatement();
+                statement = conn.prepareStatement(insertStatement,PreparedStatement.RETURN_GENERATED_KEYS);
 
-                idOfInsertedRow = stmt.executeUpdate(insertStatement,Statement.RETURN_GENERATED_KEYS);
+                statement.setInt(1,bookReview.getBookID());
+                statement.setInt(2,bookReview.getMemberID());
+                statement.setInt(3,bookReview.getRating());
 
-                ResultSet rs = stmt.getGeneratedKeys();
+                statement.setString(4,bookReview.getReviewText());
+                statement.setString(5,bookReview.getReviewTitle());
+
+                idOfInsertedRow = statement.executeUpdate();
+
+                ResultSet rs = statement.getGeneratedKeys();
 
                 if(rs.next())
                 {
@@ -81,8 +82,8 @@ public class BookReviewDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
 
                 }
                 catch (SQLException e) {
@@ -108,42 +109,44 @@ public class BookReviewDAOPrepared {
         public int updateBookReview(BookReview bookReview)
         {
 
-            //,int itemCategoryID
-
-            //item.setItemCategoryID(itemCategoryID);
 
             String updateStatement = "UPDATE " + BookReview.TABLE_NAME
 
                     + " SET "
+                    + BookReview.BOOK_ID + " = ?,"
+                    + BookReview.MEMBER_ID + " = ?,"
+                    + BookReview.RATING + " = ?,"
 
-                    + BookReview.BOOK_ID + " = " + "" + bookReview.getBookID() + "" + ","
-                    + BookReview.MEMBER_ID + " = " + "" + bookReview.getMemberID() + "" + ","
-                    + BookReview.RATING + " = " + "" + bookReview.getRating() + "" + ","
-                    + BookReview.REVIEW_TEXT + " = " + "'" + bookReview.getReviewText() + "'" + ","
-                    + BookReview.REVIEW_TITLE + " = " + "'" + bookReview.getReviewTitle() + "'" + ""
+                    + BookReview.REVIEW_TEXT + " = ?,"
+                    + BookReview.REVIEW_TITLE + " = ?"
 
 
                     + " WHERE "
-                    + BookReview.BOOK_REVIEW_ID + " = " + bookReview.getBookReviewID();
+                    + BookReview.BOOK_REVIEW_ID + " = ?";
 
-            //+ BookReview.REVIEW_DATE + " = " + "'" + bookReview.getReviewDate() + "'" + ","
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
 
             int rowCountUpdated = 0;
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
-                stmt = conn.createStatement();
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(updateStatement);
 
-                rowCountUpdated = stmt.executeUpdate(updateStatement);
+                statement.setInt(1,bookReview.getBookID());
+                statement.setInt(2,bookReview.getMemberID());
+                statement.setInt(3,bookReview.getRating());
+
+                statement.setString(4,bookReview.getReviewText());
+                statement.setString(5,bookReview.getReviewTitle());
+
+                statement.setInt(6,bookReview.getBookReviewID());
 
 
+                rowCountUpdated = statement.executeUpdate();
                 System.out.println("Total rows updated: " + rowCountUpdated);
 
 
@@ -157,8 +160,8 @@ public class BookReviewDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -183,20 +186,20 @@ public class BookReviewDAOPrepared {
         {
 
             String deleteStatement = "DELETE FROM " + BookReview.TABLE_NAME
-                    + " WHERE " + BookReview.BOOK_REVIEW_ID + " = " + bookReviewID;
+                    + " WHERE " + BookReview.BOOK_REVIEW_ID + " = ?";
 
             Connection conn= null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int rowCountDeleted = 0;
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
-                stmt = conn.createStatement();
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(deleteStatement);
 
-                rowCountDeleted = stmt.executeUpdate(deleteStatement);
+                statement.setInt(1,bookReviewID);
+
+                rowCountDeleted = statement.executeUpdate();
 
                 System.out.println("Rows Deleted: " + rowCountDeleted);
 
@@ -212,8 +215,8 @@ public class BookReviewDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -384,12 +387,8 @@ public class BookReviewDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
                 while(rs.next())
@@ -575,12 +574,9 @@ public class BookReviewDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
                 while(rs.next())
@@ -656,12 +652,8 @@ public class BookReviewDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
 

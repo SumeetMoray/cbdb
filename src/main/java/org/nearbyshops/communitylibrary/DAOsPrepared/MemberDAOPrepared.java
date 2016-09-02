@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.DAOsPrepared;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.Member;
 import org.nearbyshops.communitylibrary.ModelEndpoint.MemberEndpoint;
@@ -15,19 +17,22 @@ import java.util.List;
 public class MemberDAOPrepared {
 
 
+        private HikariDataSource dataSource = Globals.getDataSource();
+
+
+
         @Override
         protected void finalize() throws Throwable {
             // TODO Auto-generated method stub
             super.finalize();
         }
 
-
         public int saveMember(Member member)
         {
 
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int idOfInsertedRow = 0;
 
             String insertStatement = "";
@@ -36,50 +41,33 @@ public class MemberDAOPrepared {
             insertStatement = "INSERT INTO "
                     + Member.TABLE_NAME
                     + "("
-                    + Member.USER_NAME + ",";
+                    + Member.USER_NAME + ","
+                    + Member.PASSWORD + ","
+                    + Member.MEMBER_NAME + ","
 
+                    + Member.PROFILE_IMAGE_URL + ","
+                    + Member.CITY + ","
+                    + Member.ABOUT + ""
 
-
-            if(member.getPassword()!=null)
-            {
-                insertStatement = insertStatement + Member.PASSWORD + ",";
-            }
-
-
-            insertStatement = insertStatement + Member.MEMBER_NAME + ","
-                                + Member.PROFILE_IMAGE_URL + ","
-                                + Member.CITY + ","
-                                + Member.ABOUT + ""
-                                + ") VALUES("
-                                + "'" + member.getUserName() + "',";
-
-
-
-            if(member.getPassword()!=null)
-            {
-                 insertStatement = insertStatement + "'" + member.getPassword() + "',";
-            }
-
-
-            insertStatement = insertStatement + "'" + member.getMemberName() + "',"
-                                                + "'" + member.getProfileImageURL() + "',"
-                                                + "'" + member.getCity() + "',"
-                                                + "'" + member.getAbout() + "'"
-                                                + ")";
+                    + ") VALUES(?,?,?, ?,?,?)";
 
 
             try {
 
-                conn = DriverManager.getConnection(
-                        JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(insertStatement,PreparedStatement.RETURN_GENERATED_KEYS);
 
-                stmt = conn.createStatement();
+                statement.setString(1,member.getUserName());
+                statement.setString(2,member.getPassword());
+                statement.setString(3,member.getMemberName());
 
-                idOfInsertedRow = stmt.executeUpdate(insertStatement,Statement.RETURN_GENERATED_KEYS);
+                statement.setString(4,member.getProfileImageURL());
+                statement.setString(5,member.getCity());
+                statement.setString(6,member.getAbout());
 
-                ResultSet rs = stmt.getGeneratedKeys();
+
+                idOfInsertedRow = statement.executeUpdate();
+                ResultSet rs = statement.getGeneratedKeys();
 
                 if(rs.next())
                 {
@@ -97,8 +85,8 @@ public class MemberDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
 
                 }
                 catch (SQLException e) {
@@ -131,49 +119,42 @@ public class MemberDAOPrepared {
             String updateStatement = "UPDATE "
                     + Member.TABLE_NAME
                     + " SET "
-                    + Member.USER_NAME + " = " + "'" + member.getUserName() + "'" + ",";
+                    + Member.USER_NAME + " = ?,"
+                    + Member.PASSWORD + " = ?,"
+                    + Member.MEMBER_NAME + " = ?,"
 
+                    + Member.PROFILE_IMAGE_URL + " = ?,"
+                    + Member.CITY + " = ?,"
+                    + Member.ABOUT + " = ?,"
 
-            if(member.getPassword()!=null)
-            {
-                updateStatement = updateStatement
-                        + Member.PASSWORD + " = " + "'" + member.getPassword() + "'" + ",";
-            }
-
-
-            updateStatement = updateStatement + Member.MEMBER_NAME + " = " + "'" + member.getMemberName() + "'" + ","
-                                    + Member.PROFILE_IMAGE_URL + " = " + "'" + member.getProfileImageURL() + "'" + ","
-                                    + Member.CITY + " = " + "'" + member.getCity() + "'" + ","
-                                    + Member.ABOUT + " = " + "'" + member.getAbout() + "'" ;
-
-
-            if(member.getDateOfBirth()!=null)
-            {
-                updateStatement = updateStatement + ","
-                        + Member.DATE_OF_BIRTH + " = " + "'" + member.getDateOfBirth() + "'" + "";
-            }
-
-
-            updateStatement = updateStatement + " WHERE "
-                    + Member.MEMBER_ID + " = " + member.getMemberID();
+                    + Member.DATE_OF_BIRTH + " = ?"
+                    + " WHERE "
+                    + Member.MEMBER_ID + " = ?";
 
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
 
             int rowCountUpdated = 0;
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(updateStatement);
 
-                stmt = conn.createStatement();
+                statement.setString(1,member.getMemberName());
+                statement.setString(2,member.getPassword());
+                statement.setString(3,member.getMemberName());
 
-                rowCountUpdated = stmt.executeUpdate(updateStatement);
+                statement.setString(4,member.getProfileImageURL());
+                statement.setString(5,member.getCity());
+                statement.setString(6,member.getAbout());
+
+                statement.setTimestamp(7,member.getDateOfBirth());
+                statement.setInt(8,member.getMemberID());
 
 
+                rowCountUpdated = statement.executeUpdate();
                 System.out.println("Total rows updated: " + rowCountUpdated);
 
 
@@ -187,8 +168,8 @@ public class MemberDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -213,20 +194,19 @@ public class MemberDAOPrepared {
         {
 
             String deleteStatement = "DELETE FROM " + Member.TABLE_NAME
-                    + " WHERE " + Member.MEMBER_ID + " = " + memberID;
+                    + " WHERE " + Member.MEMBER_ID + " = ?";
 
-            Connection conn= null;
-            Statement stmt = null;
+            Connection connection= null;
+            PreparedStatement statement = null;
             int rowCountDeleted = 0;
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                connection = dataSource.getConnection();
+                statement = connection.prepareStatement(deleteStatement);
 
-                stmt = conn.createStatement();
+                statement.setInt(1,memberID);
 
-                rowCountDeleted = stmt.executeUpdate(deleteStatement);
+                rowCountDeleted = statement.executeUpdate();
 
                 System.out.println("Rows Deleted: " + rowCountDeleted);
 
@@ -242,8 +222,8 @@ public class MemberDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -251,8 +231,8 @@ public class MemberDAOPrepared {
 
                 try {
 
-                    if(conn!=null)
-                    {conn.close();}
+                    if(connection!=null)
+                    {connection.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -367,32 +347,28 @@ public class MemberDAOPrepared {
             ArrayList<Member> membersList = new ArrayList<>();
 
 
-            Connection conn = null;
-            Statement stmt = null;
-            ResultSet rs = null;
+            Connection connection = null;
+            Statement statement = null;
+            ResultSet resultSet = null;
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                connection = dataSource.getConnection();
+                statement = connection.createStatement();
+                resultSet = statement.executeQuery(query);
 
-                stmt = conn.createStatement();
-
-                rs = stmt.executeQuery(query);
-
-                while(rs.next())
+                while(resultSet.next())
                 {
 
                     Member member = new Member();
 
-                    member.setMemberID(rs.getInt(Member.MEMBER_ID));
-                    member.setUserName(rs.getString(Member.USER_NAME));
+                    member.setMemberID(resultSet.getInt(Member.MEMBER_ID));
+                    member.setUserName(resultSet.getString(Member.USER_NAME));
 //                    member.setPassword(rs.getString(Member.PASSWORD));
-                    member.setMemberName(rs.getString(Member.MEMBER_NAME));
-                    member.setProfileImageURL(rs.getString(Member.PROFILE_IMAGE_URL));
-                    member.setCity(rs.getString(Member.CITY));
-                    member.setAbout(rs.getString(Member.ABOUT));
+                    member.setMemberName(resultSet.getString(Member.MEMBER_NAME));
+                    member.setProfileImageURL(resultSet.getString(Member.PROFILE_IMAGE_URL));
+                    member.setCity(resultSet.getString(Member.CITY));
+                    member.setAbout(resultSet.getString(Member.ABOUT));
 //                    member.setDateOfBirth(rs.getTimestamp(Member.DATE_OF_BIRTH));
 
                     membersList.add(member);
@@ -414,8 +390,8 @@ public class MemberDAOPrepared {
             {
 
                 try {
-                    if(rs!=null)
-                    {rs.close();}
+                    if(resultSet!=null)
+                    {resultSet.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -423,8 +399,8 @@ public class MemberDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -432,8 +408,8 @@ public class MemberDAOPrepared {
 
                 try {
 
-                    if(conn!=null)
-                    {conn.close();}
+                    if(connection!=null)
+                    {connection.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -679,9 +655,9 @@ public class MemberDAOPrepared {
 
 
 
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
 
 
 //		Distributor distributor = null;
@@ -689,25 +665,23 @@ public class MemberDAOPrepared {
 
         try {
 
-            conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                    JDBCContract.CURRENT_USERNAME,JDBCContract.CURRENT_PASSWORD);
 
-            stmt = conn.createStatement();
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(query);
 
-            rs = stmt.executeQuery(query);
-
-            while(rs.next())
+            while(resultSet.next())
             {
                 endUser = new Member();
 
-                endUser.setMemberID(rs.getInt(Member.MEMBER_ID));
-                endUser.setMemberName(rs.getString(Member.MEMBER_NAME));
-                endUser.setUserName(rs.getString(Member.USER_NAME));
-                endUser.setPassword(rs.getString(Member.PASSWORD));
+                endUser.setMemberID(resultSet.getInt(Member.MEMBER_ID));
+                endUser.setMemberName(resultSet.getString(Member.MEMBER_NAME));
+                endUser.setUserName(resultSet.getString(Member.USER_NAME));
+                endUser.setPassword(resultSet.getString(Member.PASSWORD));
 
-                endUser.setProfileImageURL(rs.getString(Member.PROFILE_IMAGE_URL));
-                endUser.setCity(rs.getString(Member.CITY));
-                endUser.setAbout(rs.getString(Member.ABOUT));
+                endUser.setProfileImageURL(resultSet.getString(Member.PROFILE_IMAGE_URL));
+                endUser.setCity(resultSet.getString(Member.CITY));
+                endUser.setAbout(resultSet.getString(Member.ABOUT));
 
 
             }
@@ -725,8 +699,8 @@ public class MemberDAOPrepared {
         {
 
             try {
-                if(rs!=null)
-                {rs.close();}
+                if(resultSet!=null)
+                {resultSet.close();}
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -734,8 +708,8 @@ public class MemberDAOPrepared {
 
             try {
 
-                if(stmt!=null)
-                {stmt.close();}
+                if(statement!=null)
+                {statement.close();}
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -743,8 +717,8 @@ public class MemberDAOPrepared {
 
             try {
 
-                if(conn!=null)
-                {conn.close();}
+                if(connection!=null)
+                {connection.close();}
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

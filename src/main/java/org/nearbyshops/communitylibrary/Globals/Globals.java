@@ -1,6 +1,10 @@
 package org.nearbyshops.communitylibrary.Globals;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.nearbyshops.communitylibrary.DAOs.*;
+import org.nearbyshops.communitylibrary.DAOsPrepared.*;
+import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.BookMeetup;
 
 /**
@@ -8,14 +12,33 @@ import org.nearbyshops.communitylibrary.Model.BookMeetup;
  */
 public class Globals {
 
-    public static BookDAO bookDAO = new BookDAO();
-    public static BookCategoryDAO bookCategoryDAO = new BookCategoryDAO();
-    public static MemberDAO memberDAO = new MemberDAO();
 
-    public static BookReviewDAO bookReviewDAO = new BookReviewDAO();
+    private static HikariDataSource dataSource;
 
-    public static FavoriteBookDAO favoriteBookDAO = new FavoriteBookDAO();
-    public static BookMeetupDAO bookMeetupDAO = new BookMeetupDAO();
+    public static BookDAOPrepared bookDAO = new BookDAOPrepared();
+    public static BookCategoryDAOPrepared bookCategoryDAO = new BookCategoryDAOPrepared();
+    public static BookMeetupDAOPrepared bookMeetupDAO = new BookMeetupDAOPrepared();
+    public static BookReviewDAOPrepared bookReviewDAO = new BookReviewDAOPrepared();
+    public static FavoriteBookDAOPrepared favoriteBookDAO = new FavoriteBookDAOPrepared();
+    public static MemberDAOPrepared memberDAO = new MemberDAOPrepared();
 
+
+
+
+    public static HikariDataSource getDataSource()
+    {
+        if(dataSource==null)
+        {
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(JDBCContract.CURRENT_CONNECTION_URL);
+            config.setUsername(JDBCContract.CURRENT_USERNAME);
+            config.setPassword(JDBCContract.CURRENT_PASSWORD);
+
+            dataSource = new HikariDataSource(config);
+        }
+
+
+        return dataSource;
+    }
 
 }

@@ -91,7 +91,7 @@ public class BookResource {
 
             for(Book item : bookList)
             {
-                rowCountSum = rowCountSum + Globals.bookDAO.updateBook(item);
+                rowCountSum = rowCountSum + Globals.bookDAO.updateBookPrepared(item);
             }
 
             if(rowCountSum ==  bookList.size())

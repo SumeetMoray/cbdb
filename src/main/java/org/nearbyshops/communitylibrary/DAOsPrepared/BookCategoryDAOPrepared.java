@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.DAOsPrepared;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.Book;
 import org.nearbyshops.communitylibrary.Model.BookCategory;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public class BookCategoryDAOPrepared {
 
+        HikariDataSource dataSource = Globals.getDataSource();
+
 
         @Override
         protected void finalize() throws Throwable {
@@ -23,12 +27,14 @@ public class BookCategoryDAOPrepared {
         }
 
 
+
+
         public int saveBookCategory(BookCategory bookCategory)
         {
 
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement stmt = null;
             int idOfInsertedRow = 0;
 
             String insertStatement = "INSERT INTO "
@@ -38,23 +44,20 @@ public class BookCategoryDAOPrepared {
                     + BookCategory.IMAGE_URL + ","
                     + BookCategory.BACKDROP_IMAGE_URL + ","
                     + BookCategory.PARENT_CATEGORY_ID + ""
-                    + ") VALUES("
-                    + "'" + bookCategory.getBookCategoryName() + "',"
-                    + "'" + bookCategory.getImageURL() + "',"
-                    + "'" + bookCategory.getBackdropImageURL() + "',"
-                    + bookCategory.getParentCategoryID() + ""
-                    + ")";
+                    + ") VALUES(?,?,?,?)";
 
             try {
 
-                conn = DriverManager.getConnection(
-                        JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
 
-                stmt = conn.createStatement();
+                stmt = conn.prepareStatement(insertStatement,PreparedStatement.RETURN_GENERATED_KEYS);
 
-                idOfInsertedRow = stmt.executeUpdate(insertStatement,Statement.RETURN_GENERATED_KEYS);
+                stmt.setString(1,bookCategory.getBookCategoryName());
+                stmt.setString(2,bookCategory.getImageURL());
+                stmt.setString(3,bookCategory.getBackdropImageURL());
+                stmt.setInt(4,bookCategory.getParentCategoryID());
+
+                idOfInsertedRow = stmt.executeUpdate();
 
                 ResultSet rs = stmt.getGeneratedKeys();
 
@@ -110,28 +113,31 @@ public class BookCategoryDAOPrepared {
                     + BookCategory.TABLE_NAME
 
                     + " SET "
-                    + BookCategory.BOOK_CATEGORY_NAME + " = " + "'" + bookCategory.getBookCategoryName() + "'" + ","
-                    + BookCategory.IMAGE_URL + " = " + "'" + bookCategory.getImageURL() + "'" + ","
-                    + BookCategory.BACKDROP_IMAGE_URL + " = " + "'" + bookCategory.getBackdropImageURL() + "'" + ","
-                    + BookCategory.PARENT_CATEGORY_ID + " = " + "" + bookCategory.getParentCategoryID() + "" + ""
+                    + BookCategory.BOOK_CATEGORY_NAME + " = ?,"
+                    + BookCategory.IMAGE_URL + " = ? ,"
+                    + BookCategory.BACKDROP_IMAGE_URL + " = ? ,"
+                    + BookCategory.PARENT_CATEGORY_ID + " = ? "
 
                     + " WHERE "
-                    + BookCategory.BOOK_CATEGORY_ID + " = " + bookCategory.getBookCategoryID();
+                    + BookCategory.BOOK_CATEGORY_ID + " = ? ";
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement stmt = null;
 
             int rowCountUpdated = 0;
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
+                stmt = conn.prepareStatement(updateStatement);
 
-                stmt = conn.createStatement();
+                stmt.setString(1,bookCategory.getBookCategoryName());
+                stmt.setString(2,bookCategory.getImageURL());
+                stmt.setString(3,bookCategory.getBackdropImageURL());
+                stmt.setInt(4,bookCategory.getParentCategoryID());
+                stmt.setInt(5,bookCategory.getBookCategoryID());
 
-                rowCountUpdated = stmt.executeUpdate(updateStatement);
+                rowCountUpdated = stmt.executeUpdate();
 
 
                 System.out.println("Total rows updated: " + rowCountUpdated);
@@ -173,20 +179,20 @@ public class BookCategoryDAOPrepared {
         {
 
             String deleteStatement = "DELETE FROM " + BookCategory.TABLE_NAME
-                    + " WHERE " + BookCategory.BOOK_CATEGORY_ID + " = " + bookCategoryID;
+                    + " WHERE " + BookCategory.BOOK_CATEGORY_ID + " = ? ";
 
             Connection conn= null;
-            Statement stmt = null;
+            PreparedStatement stmt = null;
             int rowCountDeleted = 0;
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
-                stmt = conn.createStatement();
+                conn = dataSource.getConnection();
+                stmt = conn.prepareStatement(deleteStatement);
+                stmt.setInt(1,bookCategoryID);
 
-                rowCountDeleted = stmt.executeUpdate(deleteStatement);
+
+                rowCountDeleted = stmt.executeUpdate();
 
                 System.out.println("Rows Deleted: " + rowCountDeleted);
 
@@ -357,12 +363,8 @@ public class BookCategoryDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
                 while(rs.next())
@@ -485,12 +487,8 @@ public class BookCategoryDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
 
                 while(rs.next())
@@ -562,14 +560,9 @@ public class BookCategoryDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
-
                 rs = stmt.executeQuery(query);
-
 
 
                 while(rs.next())

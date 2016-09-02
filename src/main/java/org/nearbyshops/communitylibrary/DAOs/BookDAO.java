@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.DAOs;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.Model.Book;
 import org.nearbyshops.communitylibrary.Model.BookCategory;
 import org.nearbyshops.communitylibrary.JDBCContract;
@@ -16,6 +18,11 @@ import java.util.List;
  * Created by sumeet on 8/8/16.
  */
 public class BookDAO {
+
+
+
+    HikariDataSource dataSource = Globals.getDataSource();
+
 
 
         @Override
@@ -60,10 +67,14 @@ public class BookDAO {
 
 
         try {
-            conn = DriverManager.getConnection(
+            /*conn = DriverManager.getConnection(
                     JDBCContract.CURRENT_CONNECTION_URL,
                     JDBCContract.CURRENT_USERNAME,
-                    JDBCContract.CURRENT_PASSWORD);
+                    JDBCContract.CURRENT_PASSWORD);*/
+
+
+            conn = dataSource.getConnection();
+
 
             preparedStatement = conn.prepareStatement(insertStatement,PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -276,9 +287,12 @@ public class BookDAO {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
+                /*conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
                         JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                        JDBCContract.CURRENT_PASSWORD);*/
+
+
+                conn = dataSource.getConnection();
 
 
                 preparedStatement = conn.prepareStatement(updateStatement);
@@ -649,10 +663,12 @@ public class BookDAO {
             ResultSet rs = null;
 
             try {
-
+/*
                 conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
                         JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                        JDBCContract.CURRENT_PASSWORD);*/
+
+                conn = dataSource.getConnection();
 
                 stmt = conn.createStatement();
 
@@ -827,10 +843,15 @@ public class BookDAO {
             ResultSet rs = null;
 
             try {
-
+/*
                 conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
                         JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                        JDBCContract.CURRENT_PASSWORD);*/
+
+
+
+                conn = dataSource.getConnection();
+
 
                 stmt = conn.createStatement();
 
@@ -906,10 +927,13 @@ public class BookDAO {
             Book book = null;
 
             try {
-
+/*
                 conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
                         JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                        JDBCContract.CURRENT_PASSWORD);*/
+
+
+                conn = Globals.getDataSource().getConnection();
 
                 stmt = conn.createStatement();
 

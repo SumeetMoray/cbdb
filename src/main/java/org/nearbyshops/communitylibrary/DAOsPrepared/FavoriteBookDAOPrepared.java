@@ -1,5 +1,7 @@
 package org.nearbyshops.communitylibrary.DAOsPrepared;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.nearbyshops.communitylibrary.Globals.Globals;
 import org.nearbyshops.communitylibrary.JDBCContract;
 import org.nearbyshops.communitylibrary.Model.FavouriteBook;
 import org.nearbyshops.communitylibrary.ModelEndpoint.FavouriteBookEndpoint;
@@ -14,6 +16,7 @@ import java.util.List;
  */
 public class FavoriteBookDAOPrepared {
 
+    private HikariDataSource dataSource = Globals.getDataSource();
 
         @Override
         protected void finalize() throws Throwable {
@@ -27,10 +30,8 @@ public class FavoriteBookDAOPrepared {
 
 
             Connection conn = null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int idOfInsertedRow = 0;
-
-
 
 
             String insertStatement = "INSERT INTO "
@@ -38,23 +39,19 @@ public class FavoriteBookDAOPrepared {
                     + "("
                     + FavouriteBook.BOOK_ID + ","
                     + FavouriteBook.MEMBER_ID
-                    + ") VALUES("
-                    + favouriteBook.getBookID() + ","
-                    + favouriteBook.getMemberID() + ""
-                    + ")";
+                    + ") VALUES(?,?)";
 
             try {
 
-                conn = DriverManager.getConnection(
-                        JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(insertStatement,PreparedStatement.RETURN_GENERATED_KEYS);
 
-                stmt = conn.createStatement();
+                statement.setInt(1,favouriteBook.getBookID());
+                statement.setInt(2,favouriteBook.getMemberID());
 
-                idOfInsertedRow = stmt.executeUpdate(insertStatement,Statement.RETURN_GENERATED_KEYS);
+                idOfInsertedRow = statement.executeUpdate();
 
-                ResultSet rs = stmt.getGeneratedKeys();
+                ResultSet rs = statement.getGeneratedKeys();
 
                 if(rs.next())
                 {
@@ -72,8 +69,8 @@ public class FavoriteBookDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
 
                 }
                 catch (SQLException e) {
@@ -101,22 +98,22 @@ public class FavoriteBookDAOPrepared {
         {
 
             String deleteStatement = "DELETE FROM " + FavouriteBook.TABLE_NAME
-                    + " WHERE " + FavouriteBook.BOOK_ID + " = " + bookID
-                    + " AND " + FavouriteBook.MEMBER_ID + " = " + memberID;
+                    + " WHERE " + FavouriteBook.BOOK_ID + " = ?"
+                    + " AND " + FavouriteBook.MEMBER_ID + " = ?";
 
             Connection conn= null;
-            Statement stmt = null;
+            PreparedStatement statement = null;
             int rowCountDeleted = 0;
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
-                stmt = conn.createStatement();
+                conn = dataSource.getConnection();
+                statement = conn.prepareStatement(deleteStatement);
 
-                rowCountDeleted = stmt.executeUpdate(deleteStatement);
+                statement.setInt(1,bookID);
+                statement.setInt(2,memberID);
 
+                rowCountDeleted = statement.executeUpdate();
                 System.out.println("Rows Deleted: " + rowCountDeleted);
 
 
@@ -131,8 +128,8 @@ public class FavoriteBookDAOPrepared {
 
                 try {
 
-                    if(stmt!=null)
-                    {stmt.close();}
+                    if(statement!=null)
+                    {statement.close();}
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -300,10 +297,8 @@ public class FavoriteBookDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
 
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
 
 
@@ -454,10 +449,7 @@ public class FavoriteBookDAOPrepared {
 
             try {
 
-                conn = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                        JDBCContract.CURRENT_USERNAME,
-                        JDBCContract.CURRENT_PASSWORD);
-
+                conn = dataSource.getConnection();
                 stmt = conn.createStatement();
 
                 rs = stmt.executeQuery(query);
@@ -513,6 +505,5 @@ public class FavoriteBookDAOPrepared {
 
             return endPoint;
         }
-
 
 }
